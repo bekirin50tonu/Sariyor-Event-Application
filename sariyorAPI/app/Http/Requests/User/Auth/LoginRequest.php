@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\User\Auth;
 
 use App\Http\Helpers\Classes\CustomJsonResponse;
 use Illuminate\Contracts\Validation\Validator;

@@ -165,7 +165,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-        // Other Providers
+        // Other Services Providers
         UserServiceProvider::class,
 
         /*

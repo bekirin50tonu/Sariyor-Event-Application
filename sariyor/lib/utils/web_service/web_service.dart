@@ -11,23 +11,24 @@ class WebService {
 
   static Dio? getInstance() {
     _inst!.clear();
-    _inst!.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) => handler.next(options),
-        onError: (error, handler) async {
-          if (error.response?.statusCode == HttpStatus.unauthorized) {
-            var token = Prefs.getString('token');
-            error.requestOptions.headers['Authorization'] = "Bearer $token";
-            final opt = Options(
-                method: error.requestOptions.method,
-                headers: error.requestOptions.headers);
-            final req = await _inst!.request(error.requestOptions.path,
-                options: opt,
-                data: error.requestOptions.data,
-                queryParameters: error.requestOptions.queryParameters);
-            return handler.resolve(req);
-          }
-          handler.next(error);
-        }));
+    _inst!.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) {
+      options.headers['Accept'] = "application/json";
+      handler.next(options);
+    }, onError: (error, handler) async {
+      if (error.response?.statusCode == HttpStatus.unauthorized) {
+        var token = Prefs.getString('token');
+        error.requestOptions.headers['Authorization'] = "Bearer $token";
+        final opt = Options(
+            method: error.requestOptions.method,
+            headers: error.requestOptions.headers);
+        final req = await _inst!.request(error.requestOptions.path,
+            options: opt,
+            data: error.requestOptions.data,
+            queryParameters: error.requestOptions.queryParameters);
+        return handler.resolve(req);
+      }
+      handler.next(error);
+    }));
     return _inst;
   }
 }

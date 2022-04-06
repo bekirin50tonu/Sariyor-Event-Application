@@ -8,5 +8,6 @@
 This project is Sariyor Mobile Application and API service resources code for advanced programming lesson of final exam.
 
 ## Contributors
-- [bekirin50tonu (@bekirin50tonu)](https://github.com/bekirin50tonu)
-- [frknsagg (@frknsagg)](https://github.com/frknsagg)
+- [Bekir Görmez (@bekirin50tonu)](https://github.com/bekirin50tonu)
+- [Furkan Sağ (@frknsagg)](https://github.com/frknsagg)
+- [Mehmet Şakar (@mehmetce)](https://github.com/mehmetce)

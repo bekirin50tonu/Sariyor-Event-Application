@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\User;
 
+use App\Http\Helpers\Classes\CustomJsonResponse;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use JetBrains\PhpStorm\ArrayShape;
 
@@ -47,7 +49,14 @@ class RegisterRequest extends FormRequest
             'username.unique' => 'Lütfen Kullanılmayan Kullanıcı Adı Giriniz.',
             'email.required' => 'Lütfen E Posta Adresinizi Giriniz.',
             'email.email' => 'Lütfen Geçerli Bir E Posta Adresi Giriniz.',
-            'email.unique' => 'Lütfen Kullanılmayan Kullanıcı Adı Giriniz.',
+            'email.unique' => 'Lütfen Kullanılmayan E-Posta Adresi Giriniz.',
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        $response = new CustomJsonResponse(422, "Kayıt İşlemi Başarısız", $validator->errors()->all());
+
+        throw new \Illuminate\Validation\ValidationException($validator, $response);
     }
 }

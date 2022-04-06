@@ -27,7 +27,9 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        view()->composer('view',function (){
+
+        });
     }
 
     /**

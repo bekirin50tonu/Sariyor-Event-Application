@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use JetBrains\PhpStorm\ArrayShape;
 
 class AuthService
 {
 
-    public function register(array $data): array
+    #[ArrayShape(['status_code' => "int", 'message' => "string", 'data' => "array"])] public function register(array $data): array
     {
         try {
             $data['password'] = Hash::make($data['password']);
@@ -17,32 +18,61 @@ class AuthService
             return [
                 'status_code' => 200,
                 'message' => 'İşlem Başarılı',
-                'data' => [$user]
+                'data' => []
             ];
         } catch (\Exception $e) {
             return [
-                'status_code' => 403,
+                'status_code' => 303,
                 'message' => $e->getMessage(),
-                'data' => []
+                'data' => $e->getTrace()
             ];
         }
     }
 
-    public function login(array $data)
+    public function login(string $email, string $password): array
     {
         try {
-            if (Auth::attempt($data)) {
-                $user = Auth::user();
-                return $user->createToken('access_token');
-            }
-            return null;
+            $user = User::query()->where('email', '=', $email)->first();
+            if (!$user) return [
+                'status_code' => 303,
+                'message' => "Başarısız",
+                'data' => ["Belirtilen Kullanıcı Bulunamadı"]
+            ];
+            else if (!Hash::check($password, $user->password)) return [
+                'status_code' => 303,
+                'message' => "Başarısız",
+                'data' => ["Belirtilen Parola Yanlış, Tekrar Deneyiniz."]
+            ];
+            return [
+                'status_code' => 200,
+                'message' => 'İşlem Başarılı',
+                'data' => [
+                    "user" => $user,
+                    "token" => $user->createToken($email)->plainTextToken
+                ]
+            ];
         } catch (\Exception $e) {
-            return $e->getMessage();
+            return ['status_code' => 303,
+                'message' => $e->getMessage(),
+                'data' => $e->getTrace()];
         }
     }
 
-    public function logout(Authenticatable $user){
-        $user->logout();
-        return true;
+    public
+    function logout(Authenticatable $user): array
+    {
+        try {
+            $user->tokens()->delete();
+            return [
+                'status_code' => 200,
+                'message' => "Başarılı",
+                'data' => ["Başarıyla Çıkış Yapıldı. Yönlendiriliyor."]
+            ];
+        } catch (\Exception $e) {
+            return ['status_code' => 303,
+                'message' => $e->getMessage(),
+                'data' => $e->getTrace()];
+        }
     }
+
 }

@@ -16,9 +16,9 @@ class UserServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(UserService::class, function ($app) {
+        $this->app->singletonIf('user_service', function ($app) {
             $auth = new AuthService();
-            return new UserService($auth);
+            return new UserService($app, $auth);
         });
     }
 
@@ -30,5 +30,10 @@ class UserServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+    }
+
+    public function provides()
+    {
+        return ['user_service'];
     }
 }

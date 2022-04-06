@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use App\Http\Helpers\Classes\CustomJsonResponse;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -37,5 +39,14 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    protected function unauthenticated($request, AuthenticationException $exception): CustomJsonResponse|\Symfony\Component\HttpFoundation\Response|\Illuminate\Http\RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return new CustomJsonResponse(401, 'Başarısız', ['Giriş Yapılmadı.']);
+        }
+
+        return redirect()->guest('login');
     }
 }

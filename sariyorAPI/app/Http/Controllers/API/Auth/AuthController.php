@@ -7,17 +7,10 @@ use App\Http\Helpers\Classes\CustomJsonResponse;
 use App\Http\Requests\User\Auth\LoginRequest;
 use App\Http\Requests\User\Auth\RegisterRequest;
 use App\Services\AuthService;
-use App\Services\UserService;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    private UserService $user_service;
-
-    public function __construct()
-    {
-        $this->user_service = app(UserService::class);
-    }
 
     function register(RegisterRequest $request, AuthService $userService): CustomJsonResponse
     {
@@ -31,7 +24,7 @@ class AuthController extends Controller
         return new CustomJsonResponse(...$status);
     }
 
-    function logout(Request $request, AuthService $userService)
+    function logout(Request $request, AuthService $userService): CustomJsonResponse
     {
         $user = $request->user();
         $status = $userService->logout($user);

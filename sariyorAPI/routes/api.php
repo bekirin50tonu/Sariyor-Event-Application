@@ -24,3 +24,11 @@ Route::prefix('auth')->group(function () {
     Route::post('logout', [\App\Http\Controllers\API\Auth\AuthController::class, 'logout'])->middleware('auth:sanctum')->name('logout');
 });
 
+Route::prefix('friend')->middleware(['auth:sanctum'])->group(function () {
+    Route::post('add', [\App\Http\Controllers\API\User\AddFriendController::class, 'addFriend'])->name('add');
+    Route::post('delete', [\App\Http\Controllers\API\User\AddFriendController::class, 'deleteFriend'])->name('delete');
+    Route::post('accept', [\App\Http\Controllers\API\User\AddFriendController::class, 'acceptFriendQuest'])->name('accept');
+    Route::get('all', [\App\Http\Controllers\API\User\AddFriendController::class, 'getFriends'])->name('all');
+    Route::get('request', [\App\Http\Controllers\API\User\AddFriendController::class, 'getFriendRequest'])->name('request');
+});
+

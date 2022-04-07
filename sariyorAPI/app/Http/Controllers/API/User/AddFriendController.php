@@ -60,7 +60,7 @@ class AddFriendController extends Controller
     {
         try {
             $user = $request->user();
-            $quests = AddFriend::query()->where('request_user_id', $user->id)->where('response_user_id')->where('status', 'accepted')->get();
+            $quests = AddFriend::query()->where('request_user_id', $user->id)->where('status', 'accepted')->orWhere('response_user_id', $user->id)->get();
             return new CustomJsonResponse(200, 'Bütün Arkadaşlar Getirildi.', $quests->toArray());
         } catch (\Exception $e) {
             return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());

@@ -32,3 +32,13 @@ Route::prefix('friend')->middleware(['auth:sanctum'])->group(function () {
     Route::get('request', [\App\Http\Controllers\API\User\AddFriendController::class, 'getFriendRequest'])->name('request');
 });
 
+Route::prefix('event')->middleware(['auth:sanctum'])->group(function () {
+    Route::post('create', [\App\Http\Controllers\API\Events\EventsController::class, 'createEvent'])->name('create');
+    Route::post('delete', [\App\Http\Controllers\API\Events\EventsController::class, 'deleteEvent'])->middleware(['isOwner'])->name('delete');
+    Route::post('update', [\App\Http\Controllers\API\Events\EventsController::class, 'updateEvent'])->middleware(['isOwner'])->name('update');
+    Route::get('get', [\App\Http\Controllers\API\Events\EventsController::class, 'getEvent'])->name('get');
+    Route::prefix('category')->group(function (){
+
+    });
+});
+

@@ -77,4 +77,27 @@ class AddFriendController extends Controller
             return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
         }
     }
+
+    public function getFollowers(Request $request): CustomJsonResponse
+    {
+        try {
+            $user = $request->user();
+            $quests = AddFriend::query()->where('response_user_id', $user->id)->get();
+            return new CustomJsonResponse(200, 'Takip Edenler Başarıyla Getirildi.', $quests->toArray());
+        } catch (\Exception $e) {
+            return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
+        }
+    }
+
+    //NOTE:  Burası Kaldırılabilir.
+    public function getFollowedBy(Request $request)
+    {
+        try {
+            $user = $request->user();
+            $quests = AddFriend::query()->where('request_user_id', $user->id)->get();
+            return new CustomJsonResponse(200, 'Takip Edilenler Başarıyla Getirildi', $quests->toArray());
+        } catch (\Exception $e) {
+            return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
+        }
+    }
 }

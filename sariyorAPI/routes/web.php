@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Helpers\EnumTypes\ImageType;
+use App\Services\ImageService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +17,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::prefix('image')->group(function () {
+    Route::get('event/{path}', function (ImageService $service, string $path) {
+        return $service->getStoredImage($path, ImageType::EVENT);
+    });
+    Route::get('profile/{path}', function (ImageService $service, string $path) {
+        return $service->getStoredImage($path, ImageType::PROFILE);
+    });
+    Route::get('category/{path}', function (ImageService $service, string $path) {
+        return $service->getStoredImage($path, ImageType::CATEGORY);
+    });
 });

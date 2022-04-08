@@ -43,6 +43,27 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
+        'events' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/event_images'),
+            'url' => env('APP_URL').'/image/event',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+        'profile' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/profile_images'),
+            'url' => env('APP_URL').'/image/event',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+        'category' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/category_images'),
+            'url' => env('APP_URL').'/image/category',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
 
         's3' => [
             'driver' => 's3',
@@ -71,6 +92,7 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
+        public_path('events') => storage_path('app/public/event_images'),
     ],
 
 ];

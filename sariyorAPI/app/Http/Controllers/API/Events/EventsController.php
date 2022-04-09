@@ -11,8 +11,8 @@ use Illuminate\Http\Request;
 class EventsController extends Controller
 {
 
-
-    public function createEvent(CreateEventRequest $request, EventService $service, ImageService $imageService): \App\Http\Helpers\Classes\CustomJsonResponse
+    // dependency injection
+    public function createEvent(CreateEventRequest $request, EventService $service , ImageService $imageService): \App\Http\Helpers\Classes\CustomJsonResponse
     {
         $user = $request->user();
         $image = $request->file('image');
@@ -22,10 +22,12 @@ class EventsController extends Controller
 
     public function updateEvent(Request $request, EventService $service, ImageService $imageService): \App\Http\Helpers\Classes\CustomJsonResponse
     {
+        $params = $request->all();
         $image = $request->file('image');
         $id = $request['id'];
-        unset($request['id']);
-        return $service->updateEvent($imageService, $image, $id, $request->all());
+        unset($params['id']);
+        unset($params['image']);
+        return $service->updateEvent($imageService, $image, $id, $params);
 
     }
 

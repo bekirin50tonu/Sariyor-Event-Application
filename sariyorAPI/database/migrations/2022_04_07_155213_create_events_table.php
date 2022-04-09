@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->string('description');
             $table->string('image_path')->nullable();
             $table->integer('count')->default(-1);
+            $table->boolean('only_friends')->default(false);
             // Maps Data
             $table->float('lat');
             $table->float('long');

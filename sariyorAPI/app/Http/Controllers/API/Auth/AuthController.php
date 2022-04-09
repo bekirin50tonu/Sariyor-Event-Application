@@ -14,21 +14,18 @@ class AuthController extends Controller
 
     function register(RegisterRequest $request, AuthService $userService): CustomJsonResponse
     {
-        $status = $userService->register($request->all());
-        return new CustomJsonResponse(...$status);
+        return $userService->register($request->all());
     }
 
     function login(LoginRequest $request, AuthService $userService): CustomJsonResponse
     {
-        $status = $userService->login($request->get('email'), $request->get('password'));
-        return new CustomJsonResponse(...$status);
+        return $userService->login($request->get('email'), $request->get('password'));
     }
 
     function logout(Request $request, AuthService $userService): CustomJsonResponse
     {
         $user = $request->user();
-        $status = $userService->logout($user);
-        return new CustomJsonResponse(...$status);
+        return $userService->logout($user);
     }
 
 }

@@ -26,4 +26,6 @@ class OwnerMiddleware
         }
         return $next($request);
     }
+
+
 }

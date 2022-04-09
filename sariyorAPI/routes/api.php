@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::prefix('{local}')->group(function ($local) {
+});
 
 Route::prefix('auth')->group(function () {
     Route::post('register', [\App\Http\Controllers\API\Auth\AuthController::class, 'register'])->name('register');
@@ -28,7 +30,6 @@ Route::prefix('friend')->middleware(['auth:sanctum'])->group(function () {
     Route::post('add', [\App\Http\Controllers\API\User\AddFriendController::class, 'addFriend'])->name('add');
     Route::post('delete', [\App\Http\Controllers\API\User\AddFriendController::class, 'deleteFriend'])->name('delete');
     Route::post('accept', [\App\Http\Controllers\API\User\AddFriendController::class, 'acceptFriendQuest'])->name('accept');
-    Route::get('all', [\App\Http\Controllers\API\User\AddFriendController::class, 'getFriends'])->name('all');
     Route::get('request', [\App\Http\Controllers\API\User\AddFriendController::class, 'getFriendRequest'])->name('request');
 });
 
@@ -36,9 +37,17 @@ Route::prefix('event')->middleware(['auth:sanctum'])->group(function () {
     Route::post('create', [\App\Http\Controllers\API\Events\EventsController::class, 'createEvent'])->name('create');
     Route::post('delete', [\App\Http\Controllers\API\Events\EventsController::class, 'deleteEvent'])->middleware(['isOwner'])->name('delete');
     Route::post('update', [\App\Http\Controllers\API\Events\EventsController::class, 'updateEvent'])->middleware(['isOwner'])->name('update');
-    Route::get('get', [\App\Http\Controllers\API\Events\EventsController::class, 'getEvent'])->name('get');
-    Route::prefix('category')->group(function (){
+    Route::post('join', [\App\Http\Controllers\API\Events\JoinedEventsController::class, 'joinEvent'])->name('join');
+    Route::post('exit', [\App\Http\Controllers\API\Events\JoinedEventsController::class, 'exitEvent'])->name('exit');
+    Route::post('get', [\App\Http\Controllers\API\Events\EventsController::class, 'getEvent'])->name('get');
+});
+Route::prefix('category')->group(function () {
+});
 
-    });
+Route::prefix('user')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('friends', [\App\Http\Controllers\API\User\UserController::class, 'getFriends'])->name('friends');
+    Route::post('get', [\App\Http\Controllers\API\User\UserController::class, 'getUser'])->name('get');
+    Route::post('update', [\App\Http\Controllers\API\User\UserController::class, 'updateUser'])->middleware(['isOwner'])->name('update');
+    Route::post('delete', [\App\Http\Controllers\API\User\UserController::class, 'deleteUser'])->middleware(['isOwner'])->name('delete');
 });
 

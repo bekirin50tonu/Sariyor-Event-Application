@@ -7,6 +7,7 @@ use App\Http\Helpers\EnumTypes\ImageRoute;
 use App\Models\Events;
 use App\Models\JoinedEvent;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\UploadedFile;
 
 class EventService
@@ -56,9 +57,12 @@ class EventService
     public function getEvent(int $id)
     {
         try {
-            $data = Events::query()->where('id', $id)->with(['user:id,first_name,last_name,username,image_path','category:id,name,image_path'])->first();
+            $data = Events::query()->where('id', $id)->with(['user:id,first_name,last_name,username,image_path','category:id,name,image_path'])->firstOrFail();
             return new CustomJsonResponse(200, 'Etkinlik Başarıyla Getirildi.', [$data]);
-        } catch (\Exception $e) {
+        }catch (ModelNotFoundException $e){
+            return new CustomJsonResponse(404,'Etkinlik Bulunamadı',['İstenilen Etkinlik Bulunamadı.']);
+        }
+        catch (\Exception $e) {
             return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
         }
     }

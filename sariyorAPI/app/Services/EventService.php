@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Helpers\Classes\CustomJsonResponse;
 use App\Http\Helpers\EnumTypes\ImageRoute;
 use App\Models\Events;
+use App\Models\JoinedEvent;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\UploadedFile;
 
@@ -34,7 +35,7 @@ class EventService
         array             $params)
     {
         try {
-            $params['image_path'] = !is_null($image_path) ? $service->storeImage($image_path, ImageRoute::Events) : null;
+            $params['image_path'] = $image_path != null ? $service->storeImage($image_path, ImageRoute::Events) : null;
             $data = Events::query()->where('id', $id)->update($params);
             return new CustomJsonResponse(200, 'Etkinlik Başarıyla Güncellendi.', [$data]);
         } catch (\Exception $e) {
@@ -55,8 +56,31 @@ class EventService
     public function getEvent(int $id)
     {
         try {
-            $data = Events::query()->where('id', $id)->first();
+            $data = Events::query()->where('id', $id)->with(['user:id,first_name,last_name,username,image_path','category:id,name,image_path'])->first();
             return new CustomJsonResponse(200, 'Etkinlik Başarıyla Getirildi.', [$data]);
+        } catch (\Exception $e) {
+            return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
+        }
+    }
+
+    public function joinEvent(Authenticatable $user, array $params)
+    {
+        try {
+            $array = $params;
+            $array['user_id'] = $user->id;
+            $array['event_id'] = $params['id'];
+            $status = JoinedEvent::query()->updateOrCreate($array);
+            return new CustomJsonResponse(200, 'Etkinlik Girişi Başarıyla Oluşturuldu.', [$status]);
+        } catch (\Exception $e) {
+            return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
+        }
+    }
+
+    public function exitEvent(Authenticatable $user, array $params)
+    {
+        try {
+            $status = JoinedEvent::query()->where($params)->where('user_id', $user->id)->delete();
+            return new CustomJsonResponse(200, 'Etkinlik Girişi Başarıyla Silindi.', [$status]);
         } catch (\Exception $e) {
             return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
         }

@@ -14,6 +14,10 @@ class WebService {
         var token = "1|yvMqAmkFaU8cq1mbCgnwNFpd0KbHwvkuIcP0dNPL";
         error.requestOptions.headers['Authorization'] = "Bearer $token";
         final opt = Options(
+            followRedirects: false,
+            validateStatus: (status) {
+              return status! < 500;
+            },
             method: error.requestOptions.method,
             headers: error.requestOptions.headers);
         final req = await _inst.request(error.requestOptions.path,

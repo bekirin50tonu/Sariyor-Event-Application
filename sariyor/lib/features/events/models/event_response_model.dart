@@ -64,12 +64,12 @@ class EventResponse {
     data['only_friends'] = onlyFriends;
     data['lat'] = lat;
     data['long'] = long;
-    data['start_time'] = startTime;
-    data['end_time'] = endTime;
-    data['join_start_time'] = joinStartTime;
-    data['join_end_time'] = joinEndTime;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
+    data['start_time'] = startTime.toString();
+    data['end_time'] = endTime.toString();
+    data['join_start_time'] = joinStartTime.toString();
+    data['join_end_time'] = joinEndTime.toString();
+    data['created_at'] = createdAt.toString();
+    data['updated_at'] = updatedAt.toString();
     data['user'] = user.toJson();
     data['category'] = category.toJson();
     return data;

@@ -6,6 +6,7 @@ use App\Exceptions\NotOwnerException;
 use App\Http\Helpers\Classes\CustomJsonResponse;
 use App\Models\Events;
 use Closure;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class OwnerMiddleware
@@ -21,7 +22,11 @@ class OwnerMiddleware
     public function handle(Request $request, Closure $next)
     {
         $user = $request->user();
-        if (!Events::query()->where('id',$request['id'])->where('owner_id',$user->id)->exists()) {
+        $query = Events::query()->where('id',$request['id']);
+        if (!$query->exists()){
+            return new CustomJsonResponse(404,'Etkinlik Bulunamadı',['İstenilen Etkinlik Bulunamadı.']);
+        }
+        else if ($query->where('owner_id',$user->id)->exists()) {
             throw new NotOwnerException('Veri Sana Ait Değil!');
         }
         return $next($request);

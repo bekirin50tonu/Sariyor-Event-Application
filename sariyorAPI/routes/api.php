@@ -28,18 +28,18 @@ Route::prefix('auth')->group(function () {
 
 Route::prefix('friend')->middleware(['auth:sanctum'])->group(function () {
     Route::post('add', [\App\Http\Controllers\API\User\AddFriendController::class, 'addFriend'])->name('add');
-    Route::post('delete', [\App\Http\Controllers\API\User\AddFriendController::class, 'deleteFriend'])->name('delete');
+    Route::post('delete', [\App\Http\Controllers\API\User\AddFriendController::class, 'deleteFriend'])->name('friend.delete');
     Route::post('accept', [\App\Http\Controllers\API\User\AddFriendController::class, 'acceptFriendQuest'])->name('accept');
     Route::get('request', [\App\Http\Controllers\API\User\AddFriendController::class, 'getFriendRequest'])->name('request');
 });
 
 Route::prefix('event')->middleware(['auth:sanctum'])->group(function () {
     Route::post('create', [\App\Http\Controllers\API\Events\EventsController::class, 'createEvent'])->name('create');
-    Route::post('delete', [\App\Http\Controllers\API\Events\EventsController::class, 'deleteEvent'])->middleware(['isOwner'])->name('delete');
-    Route::post('update', [\App\Http\Controllers\API\Events\EventsController::class, 'updateEvent'])->middleware(['isOwner'])->name('update');
+    Route::post('delete', [\App\Http\Controllers\API\Events\EventsController::class, 'deleteEvent'])->middleware(['isOwner'])->name('event.delete');
+    Route::post('update', [\App\Http\Controllers\API\Events\EventsController::class, 'updateEvent'])->middleware(['isOwner'])->name('event.update');
     Route::post('join', [\App\Http\Controllers\API\Events\JoinedEventsController::class, 'joinEvent'])->name('join');
     Route::post('exit', [\App\Http\Controllers\API\Events\JoinedEventsController::class, 'exitEvent'])->name('exit');
-    Route::post('get', [\App\Http\Controllers\API\Events\EventsController::class, 'getEvent'])->name('get');
+    Route::post('get', [\App\Http\Controllers\API\Events\EventsController::class, 'getEvent'])->name('event.get');
 });
 Route::prefix('category')->group(function () {
 });

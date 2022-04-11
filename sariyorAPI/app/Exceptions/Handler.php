@@ -3,10 +3,11 @@
 namespace App\Exceptions;
 
 use App\Http\Helpers\Classes\CustomJsonResponse;
+use ErrorException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
-use JetBrains\PhpStorm\ArrayShape;
+use Psy\Exception\FatalErrorException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -17,7 +18,6 @@ class Handler extends ExceptionHandler
      * @var array<int, class-string<Throwable>>
      */
     protected $dontReport = [
-        Throwable::class
     ];
 
     /**
@@ -38,15 +38,7 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (ModelDataNotFound $e){
-            return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
-        });
-        $this->reportable(function (NotOwnerException $e){
-            return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
-        });
-        $this->reportable(function (Throwable $e) {
-//            return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
-        });
+
     }
 
     protected function unauthenticated($request, AuthenticationException $exception): CustomJsonResponse|\Symfony\Component\HttpFoundation\Response|\Illuminate\Http\RedirectResponse
@@ -55,8 +47,9 @@ class Handler extends ExceptionHandler
             return new CustomJsonResponse(401, 'Başarısız', ['Giriş Yapılmadı.']);
         }
 
-        return redirect()->guest('login');
+        return redirect()->guest('login.get');
     }
+
     protected function invalidJson($request, ValidationException $exception)
     {
         if ($request->expectsJson()) {
@@ -64,10 +57,11 @@ class Handler extends ExceptionHandler
         }
     }
 
-    protected function renderExceptionResponse($request, Throwable $e)
+    protected function renderExceptionResponse($request, Throwable $e): \Illuminate\Http\Response|CustomJsonResponse|\Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
     {
         if ($request->expectsJson()) {
             return new CustomJsonResponse(403, get_class($e), [$e->getMessage()]);
         }
+        return parent::renderExceptionResponse($request, $e);
     }
 }

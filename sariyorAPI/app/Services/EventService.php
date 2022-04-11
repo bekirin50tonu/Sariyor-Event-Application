@@ -57,12 +57,11 @@ class EventService
     public function getEvent(int $id)
     {
         try {
-            $data = Events::query()->where('id', $id)->with(['user:id,first_name,last_name,username,image_path','category:id,name,image_path'])->firstOrFail();
+            $data = Events::query()->where('id', $id)->with(['user:id,first_name,last_name,username,image_path', 'category:id,name,image_path'])->firstOrFail();
             return new CustomJsonResponse(200, 'Etkinlik Başarıyla Getirildi.', [$data]);
-        }catch (ModelNotFoundException $e){
-            return new CustomJsonResponse(404,'Etkinlik Bulunamadı',['İstenilen Etkinlik Bulunamadı.']);
-        }
-        catch (\Exception $e) {
+        } catch (ModelNotFoundException $e) {
+            return new CustomJsonResponse(404, 'Etkinlik Bulunamadı', ['İstenilen Etkinlik Bulunamadı.']);
+        } catch (\Exception $e) {
             return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
         }
     }

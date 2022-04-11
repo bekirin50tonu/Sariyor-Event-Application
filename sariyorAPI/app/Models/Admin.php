@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Categories extends Model
+class Admin extends Model
 {
     use HasFactory;
 
-    protected $table = 'categories';
+    protected $table = 'admins';
+    protected $fillable = ['user_id'];
 
-    protected $fillable = ['name','image_path'];
+    public $timestamps = false;
 }

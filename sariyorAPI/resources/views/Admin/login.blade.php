@@ -13,12 +13,10 @@
 </head>
 <body>
 
-<div class="wrapper fadeInDown">
+<div class="content">
     <div id="formContent">
-        <!-- Tabs Titles -->
-
         <!-- Icon -->
-        <div class="fadeIn first">
+        <div class="header">
             <img src="https://cdn-icons-png.flaticon.com/512/179/179310.png" id="icon" alt="User Icon"/>
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -32,17 +30,16 @@
         </div>
 
         <!-- Login Form -->
-        <form action="{{route('login.post')}}" method="POST">
-            @csrf
-            <input type="text" id="login" class="fadeIn second" name="email" placeholder="login" required>
-            <input type="password" id="password" class="fadeIn third" name="password" placeholder="password" required>
-            <input type="submit" class="fadeIn fourth" value="Log In">
-        </form>
-
-        <!-- Remind Passowrd -->
-        <div id="formFooter">
-            <a class="underlineHover" href="#">Forgot Password?</a>
+        <div class="body">
+            <form action="{{route('login.post')}}" method="POST">
+                @csrf
+                <input type="text" id="login" class="fadeIn second" name="email" placeholder="login" required>
+                <input type="password" id="password" class="fadeIn third" name="password" placeholder="password"
+                       required>
+                <input type="submit" class="fadeIn fourth" value="Log In">
+            </form>
         </div>
+
 
     </div>
 </div>

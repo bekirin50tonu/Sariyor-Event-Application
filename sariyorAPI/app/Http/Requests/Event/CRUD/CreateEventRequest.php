@@ -26,7 +26,7 @@ class CreateEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cat_id' => ['required'],
+            'cat_id' => ['required', 'exists:categories,id'],
             'name' => ['required', 'min:2', 'max:15'],
             'description' => ['required', 'min:5'],
             'image' => ['image', 'mimes:jpeg,jpg,png', 'nullable'],
@@ -44,6 +44,7 @@ class CreateEventRequest extends FormRequest
     {
         return [
             'cat_id.required' => 'Kategori Numarası Girilmelidir',
+            'cat_id.exists' => 'Kategori Bulunamadı.',
             'name.required' => 'Etkinlik İsmi Girilmelidir.',
             'name.min' => 'Karakter Sayısı 2\'den Düşük Olamaz.',
             'name.max' => 'Karakter Sayısı 15\'ten Fazla Olamaz.',

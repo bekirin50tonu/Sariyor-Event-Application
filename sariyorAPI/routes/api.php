@@ -41,13 +41,18 @@ Route::prefix('event')->middleware(['auth:sanctum'])->group(function () {
     Route::post('exit', [\App\Http\Controllers\API\Events\JoinedEventsController::class, 'exitEvent'])->name('exit');
     Route::post('get', [\App\Http\Controllers\API\Events\EventsController::class, 'getEvent'])->name('event.get');
 });
-Route::prefix('category')->group(function () {
-});
 
 Route::prefix('user')->middleware(['auth:sanctum'])->group(function () {
     Route::get('friends', [\App\Http\Controllers\API\User\UserController::class, 'getFriends'])->name('friends');
     Route::post('get', [\App\Http\Controllers\API\User\UserController::class, 'getUser'])->name('get');
     Route::post('update', [\App\Http\Controllers\API\User\UserController::class, 'updateUser'])->middleware(['isOwner'])->name('update');
     Route::post('delete', [\App\Http\Controllers\API\User\UserController::class, 'deleteUser'])->middleware(['isOwner'])->name('delete');
+});
+
+Route::prefix('search')->middleware(['auth:sanctum'])->group(function () {
+    Route::post('user', [\App\Http\Controllers\API\Events\SearchController::class, 'userSearch'])->name('user');
+    Route::post('category', [\App\Http\Controllers\API\Events\SearchController::class, 'categorySearch'])->name('category');
+    Route::post('event', [\App\Http\Controllers\API\Events\SearchController::class, 'eventSearch'])->name('event');
+    Route::post('/', [\App\Http\Controllers\API\Events\SearchController::class, 'allSearch'])->name('all');
 });
 

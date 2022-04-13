@@ -11,9 +11,9 @@ class Events extends Model
 
     protected $table = 'events';
 
-    protected $fillable = ['name', 'description', 'owner_id', 'cat_id', 'lat', 'long', 'start_time', 'only_friends' ,'end_time', 'join_start_time', 'join_end_time', 'count', 'image_path'];
+    protected $fillable = ['name', 'description', 'owner_id', 'cat_id', 'lat', 'long', 'start_time', 'only_friends', 'end_time', 'join_start_time', 'join_end_time', 'count', 'image_path'];
 
-    protected $hidden = ['owner_id','cat_id'];
+    protected $hidden = ['owner_id', 'cat_id'];
 
     protected $casts = [
         'only_friends' => 'boolean',
@@ -28,11 +28,19 @@ class Events extends Model
 
     public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(User::class,'id','owner_id');
+        return $this->hasOne(User::class, 'id', 'owner_id');
     }
 
     public function category(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(Categories::class,'id','cat_id');
+        return $this->hasOne(Categories::class, 'id', 'cat_id');
+    }
+
+    public function search(): \Illuminate\Support\Collection
+    {
+        $event = self::query()->first();
+        $user = $this->hasOne(User::class, 'id', 'owner_id')->first();
+        $category = $this->hasOne(Categories::class, 'id', 'cat_id')->first();
+        return collect([$event, $user, $category]);
     }
 }

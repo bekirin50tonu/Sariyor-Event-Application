@@ -14,10 +14,12 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      *
      * @return void
+     * @throws \Exception
      */
     public function run()
     {
-        $user = User::query()->create(['first_name' => 'admin', 'last_name' => 'admin', 'username' => 'admin', 'email' => 'admin@admin.com', 'password' => Hash::make('password')]);
+        $verified = new \DateTime("now", new \DateTimeZone("UTC"));
+        $user = User::query()->create(['first_name' => 'admin', 'last_name' => 'admin', 'username' => 'admin', 'email_verified_at' => $verified, 'email' => 'admin@admin.com', 'password' => Hash::make('password')]);
         Admin::query()->create(['user_id' => $user->id]);
         User::factory(10)->create();
         Categories::factory(10)->create();

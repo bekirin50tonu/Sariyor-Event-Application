@@ -6,6 +6,7 @@ use App\Http\Helpers\Classes\CustomJsonResponse;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use JetBrains\PhpStorm\ArrayShape;
 
 class AuthService
@@ -15,6 +16,7 @@ class AuthService
     {
         try {
             $data['password'] = Hash::make($data['password']);
+            $data['email_verified_at'] = new \DateTime("now", new \DateTimeZone("UTC"));
             $user = \App\Models\User::query()->create($data);
             return new CustomJsonResponse(200, 'Kayıt Başarıyla Oluşturuldu ve Giriş Yapıldı', [
                 'user' => $user,

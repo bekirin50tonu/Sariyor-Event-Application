@@ -23,6 +23,7 @@ class User extends Authenticatable
         'îmage_path',
         'email',
         'password',
+        'email_verified_at'
     ];
 
     /**

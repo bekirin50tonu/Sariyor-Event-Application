@@ -12,7 +12,7 @@ class EventsController extends Controller
 {
 
     // dependency injection
-    public function createEvent(CreateEventRequest $request, EventService $service , ImageService $imageService): \App\Http\Helpers\Classes\CustomJsonResponse
+    public function createEvent(CreateEventRequest $request, EventService $service, ImageService $imageService): \App\Http\Helpers\Classes\CustomJsonResponse
     {
         $user = $request->user();
         $image = $request->file('image');
@@ -39,6 +39,13 @@ class EventsController extends Controller
     public function getEvent(EventService $service, Request $request): \App\Http\Helpers\Classes\CustomJsonResponse
     {
         return $service->getEvent($request['id']);
+    }
+
+    public function getAllEvent(EventService $service, Request $request): \App\Http\Helpers\Classes\CustomJsonResponse
+    {
+        return $service->getFilteredEvents($request);
+
+
     }
 
 }

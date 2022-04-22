@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:sariyor/constants/app_constant.dart';
+import 'package:sariyor/utils/locale/shared_preferences.dart';
 // import 'package:sariyor/utils/locale/shared_preferences.dart';
 
 class WebService {
@@ -10,12 +11,13 @@ class WebService {
       receiveTimeout: 10000,
     ));
     _inst.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) {
+      var token = Prefs.getString('token');
       options.headers['Accept'] = "application/json";
+      options.headers['Authorization'] = "Bearer $token";
       handler.next(options);
     }, onError: (error, handler) async {
       if (error.response?.statusCode == 401) {
-        // var token = Prefs.getString('token');
-        var token = "1|yvMqAmkFaU8cq1mbCgnwNFpd0KbHwvkuIcP0dNPL";
+        var token = Prefs.getString('token');
         error.requestOptions.headers['Authorization'] = "Bearer $token";
         final opt = Options(
             followRedirects: false,

@@ -34,6 +34,7 @@ Route::prefix('friend')->middleware(['auth:sanctum'])->group(function () {
 });
 
 Route::prefix('event')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('all',[\App\Http\Controllers\API\Events\EventsController::class,'getAllEvent'])->name('event.all');
     Route::post('create', [\App\Http\Controllers\API\Events\EventsController::class, 'createEvent'])->name('create');
     Route::post('delete', [\App\Http\Controllers\API\Events\EventsController::class, 'deleteEvent'])->middleware(['isOwner'])->name('event.delete');
     Route::post('update', [\App\Http\Controllers\API\Events\EventsController::class, 'updateEvent'])->middleware(['isOwner'])->name('event.update');

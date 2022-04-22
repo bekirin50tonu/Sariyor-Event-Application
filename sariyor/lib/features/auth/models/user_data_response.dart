@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 class UserDataResponse {
   bool success;
   String message;

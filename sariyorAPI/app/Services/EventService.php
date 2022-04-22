@@ -8,6 +8,7 @@ use App\Models\Events;
 use App\Models\JoinedEvent;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 
 class EventService
@@ -89,33 +90,15 @@ class EventService
         }
     }
 
-    public function getFilteredEvents()
+    public function getFilteredEvents(Request $request)
     {
-
+        try {
+            $paginate = Events::query()->orderByDesc('join_start_time')->orderByDesc('start_time')->with('user')->with('category')->paginate(5);
+            return new CustomJsonResponse(200, 'Etkinlikler Başarıyla Getirildi.', [$paginate]);
+        } catch (\Exception $e) {
+            return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
+        }
     }
 
-    public function createCategory()
-    {
 
-    }
-
-    public function deleteCategory()
-    {
-
-    }
-
-    public function updateCategory()
-    {
-
-    }
-
-    public function getCategory()
-    {
-
-    }
-
-    public function getAllCategories()
-    {
-
-    }
 }

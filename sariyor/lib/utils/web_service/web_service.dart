@@ -4,7 +4,11 @@ import 'package:sariyor/constants/app_constant.dart';
 
 class WebService {
   static Dio getInstance() {
-    Dio _inst = Dio(BaseOptions(baseUrl: AppConstants.BASE_URL));
+    Dio _inst = Dio(BaseOptions(
+      baseUrl: AppConstants.BASE_URL,
+      connectTimeout: 5000,
+      receiveTimeout: 10000,
+    ));
     _inst.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) {
       options.headers['Accept'] = "application/json";
       handler.next(options);

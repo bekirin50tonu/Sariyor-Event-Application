@@ -101,8 +101,8 @@ class _SingUpWidgetState extends State<SingUpWidget> {
                               validator: (deger) {
                                 if (deger!.length < 2) {
                                   return 'Ad 2 karakterden az olamaz';
-                                } else
-                                  return null;
+                                }
+                                return null;
                               },
                             ),
                           ),

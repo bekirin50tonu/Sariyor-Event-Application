@@ -2,13 +2,15 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sariyor/features/auth/models/user_data_response.dart';
+import 'package:sariyor/features/auth/models/user_register_request.dart';
 import 'package:sariyor/features/events/models/event_response_model.dart';
 
 import 'package:sariyor/utils/web_service/web_service.dart';
 
 void main() {
   var service = WebService.getInstance();
-  group('Event Network Test', () {
+  group('Network Test', () {
     test('Get Event', () async {
       try {
         var response = await service.post('/event/get', data: {"id": 32});
@@ -28,6 +30,30 @@ void main() {
         }
       } on Exception catch (e) {
         log(e.toString());
+      }
+    });
+
+    test('Register User', () async {
+      try {
+        var request = UserRegisterRequest(
+                firstName: 'bekir',
+                lastName: 'gormez',
+                username: 'bekirin50tonu1',
+                email: 'bgrmz@yandex1.com',
+                password: 'password1')
+            .toJson();
+        print(request.toString());
+        var response = await service.post<UserDataResponse>('/auth/register',
+            data: request);
+
+        if (response.statusCode == 200) {
+          expect(response.data!.data!.token, isNotNull);
+        }
+      } on DioError catch (e) {
+        if (e.response!.statusCode == 422) {
+          log('ehehehe');
+        }
+        ;
       }
     });
   });

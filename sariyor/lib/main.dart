@@ -13,11 +13,11 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
-  bool firstLaunch = Prefs.getBool('firstLaunch') ?? false;
+  final bool firstLaunch = Prefs.getBool('firstLaunch') ?? true;
 
   @override
   Widget build(BuildContext context) {
-    String initialRoute = !firstLaunch ? '/splash' : '/auth';
+    String initialRoute = !firstLaunch ? '/splash' : '/register';
     log(initialRoute);
     return MaterialApp(
       title: 'Flutter Demo',

@@ -18,7 +18,8 @@ class CategoriesFactory extends Factory
     #[ArrayShape(['name' => "string"])] public function definition(): array
     {
         return [
-            'name' => $this->faker->colorName()
+            'name' => $this->faker->colorName(),
+            'image_path' => $this->faker->image('public/storage/category_images',640,480, null, false),
         ];
     }
 }

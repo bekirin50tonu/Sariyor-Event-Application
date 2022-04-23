@@ -25,6 +25,7 @@ class EventsFactory extends Factory
                 'description' => $this->faker->paragraph(),
                 'owner_id' => 2,
                 'cat_id' => 1,
+                'image_path' => $this->faker->image('public/storage/event_images', 640, 480, null, false),
                 'lat' => $this->faker->latitude(),
                 'long' => $this->faker->longitude(),
                 'start_time' => $date->toDateString(),

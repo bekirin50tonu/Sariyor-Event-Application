@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sariyor/features/auth/models/user_data_response.dart';
 import 'package:sariyor/features/auth/models/user_register_request.dart';
-import 'package:sariyor/features/events/models/event_paginate_model.dart';
+import 'package:sariyor/features/events/models/event_paginate_response_model.dart';
 import 'package:sariyor/features/events/models/event_response_model.dart';
 
 import 'package:sariyor/utils/web_service/web_service.dart';

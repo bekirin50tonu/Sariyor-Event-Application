@@ -12,7 +12,6 @@ import 'package:sariyor/widgets/custom_text_form_field.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({Key? key}) : super(key: key);
-  PageController pageController = PageController();
 
   @override
   Widget build(BuildContext context) {

@@ -14,7 +14,7 @@ import 'package:sariyor/widgets/event_card_widget.dart';
 
 class IndexPage extends StatefulWidget {
   const IndexPage({Key? key}) : super(key: key);
-  static bool isJoin = false;
+  static bool isJoin = true;
 
   @override
   State<IndexPage> createState() => _IndexPageState();

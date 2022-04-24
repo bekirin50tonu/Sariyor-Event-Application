@@ -9,7 +9,7 @@ class CustomElevatedButton extends StatefulWidget {
       required this.onPressed,
       this.deactiveLabel = "",
       this.onPressedDisabled,
-      this.disabled = false})
+      this.disabled = true})
       : super(key: key);
 
   Function()? onPressed;

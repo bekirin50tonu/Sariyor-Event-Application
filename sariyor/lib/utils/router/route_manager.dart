@@ -51,6 +51,7 @@ class RouteManager {
   static Widget get initialRoute {
     final bool firstLaunch = Prefs.getBool('firstLaunch') ?? true;
     final bool isAuth = Prefs.getString('token') != '' ? true : false;
+    return LoginPage();
     return isAuth
         ? IndexPage()
         : firstLaunch

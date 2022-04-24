@@ -11,7 +11,7 @@ import 'package:sariyor/widgets/custom_elevated_button.dart';
 import 'package:sariyor/widgets/custom_text_form_field.dart';
 
 class RegisterPage extends StatelessWidget {
-  RegisterPage({Key? key}) : super(key: key);
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

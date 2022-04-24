@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sariyor/features/events/pages/index_page.dart';
 
 // ignore: must_be_immutable
 class CustomElevatedButton extends StatefulWidget {
@@ -6,10 +7,15 @@ class CustomElevatedButton extends StatefulWidget {
       {Key? key,
       required this.label,
       required this.onPressed,
+      this.deactiveLabel = "",
+      this.onPressedDisabled,
       this.disabled = false})
       : super(key: key);
-  Function? onPressed;
+
+  Function()? onPressed;
+  Function()? onPressedDisabled;
   String label;
+  String deactiveLabel;
   bool disabled;
 
   @override
@@ -17,22 +23,23 @@ class CustomElevatedButton extends StatefulWidget {
 }
 
 class _CustomElevatedButtonState extends State<CustomElevatedButton> {
-  _onPressed() {
-    if (widget.onPressed != null) {
-      return widget.onPressed!();
-    }
-    return null;
-  }
-
   @override
-  Widget build(BuildContext context) {
+  build(BuildContext context) {
     return ElevatedButton(
-        onPressed: () {
-          setState(() {
-            widget.disabled ? null : _onPressed();
-          });
-        },
-        child: Text(widget.label),
+        onPressed: widget.disabled
+            ? null
+            : IndexPage.isJoin
+                ? () {
+                    setState(() {
+                      widget.onPressed!();
+                    });
+                  }
+                : () {
+                    setState(() {
+                      widget.onPressedDisabled!();
+                    });
+                  },
+        child: Text(IndexPage.isJoin ? widget.label : widget.deactiveLabel),
         style: ElevatedButton.styleFrom(
             disabledMouseCursor: MouseCursor.uncontrolled,
             minimumSize: const Size(350, 50),

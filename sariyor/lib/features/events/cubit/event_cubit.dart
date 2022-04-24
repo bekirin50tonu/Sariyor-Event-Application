@@ -12,7 +12,12 @@ class EventCubit extends Cubit<BaseState> {
   final Dio service;
   final BuildContext context;
   List<JoinedEvent> events = [];
+  bool isJoin = false;
   EventCubit(this.service, this.context) : super(const IdleState());
+
+  Future<void> isJoinEvent() async {
+    isJoin = !isJoin;
+  }
 
   Future<void> getAlljoinedEvents() async {
     try {

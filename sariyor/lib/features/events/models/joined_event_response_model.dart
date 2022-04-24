@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 class JoinedEventResponseModel {
   bool success;
   String message;
@@ -94,6 +92,8 @@ class Event {
   DateTime joinEndTime;
   DateTime createdAt;
   DateTime updatedAt;
+  User owner;
+  Category category;
 
   Event(
       {required this.id,
@@ -109,7 +109,9 @@ class Event {
       required this.joinStartTime,
       required this.joinEndTime,
       required this.createdAt,
-      required this.updatedAt});
+      required this.updatedAt,
+      required this.owner,
+      required this.category});
 
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
@@ -126,6 +128,21 @@ class Event {
         joinStartTime: DateTime.parse(json['join_start_time']),
         joinEndTime: DateTime.parse(json['join_end_time']),
         createdAt: DateTime.parse(json['created_at']),
-        updatedAt: DateTime.parse(json['updated_at']));
+        updatedAt: DateTime.parse(json['updated_at']),
+        owner: User.fromJson(json['user']),
+        category: Category.fromJson(json['category']));
+  }
+}
+
+class Category {
+  int id;
+  String name;
+  String? imagePath;
+
+  Category({required this.id, required this.name, this.imagePath});
+
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
+        id: json['id'], name: json['name'], imagePath: json['image_path']);
   }
 }

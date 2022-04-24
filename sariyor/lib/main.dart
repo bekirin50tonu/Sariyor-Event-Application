@@ -9,21 +9,21 @@ import 'package:sariyor/utils/router/route_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Prefs.init();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: RouteService.globalKey,
       title: 'Sarıyo',
-      theme: ThemeManager.lightTheme(),
-      darkTheme: ThemeManager.darkTheme(),
+      theme: ThemeManager(context).lightTheme(),
+      darkTheme: ThemeManager(context).darkTheme(),
       themeMode: ThemeMode.dark,
-      initialRoute: RouteManager.initialRoute,
+      home: RouteManager.initialRoute,
       onGenerateRoute: RouteManager.generateRoute,
       debugShowCheckedModeBanner: false,
     );

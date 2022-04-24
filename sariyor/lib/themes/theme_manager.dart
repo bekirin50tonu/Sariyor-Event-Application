@@ -3,13 +3,15 @@ import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter/src/cupertino/theme.dart';
 
 class ThemeManager {
-  static ThemeData lightTheme() {
-    return ThemeData(
-        primaryColor: Colors.deepPurple,
-        );
+  ThemeManager(this.context);
+
+  BuildContext context;
+
+  ThemeData lightTheme() {
+    return Theme.of(context).copyWith();
   }
 
-  static ThemeData darkTheme() {
-    return ThemeData(primaryColor: Colors.black);
+  ThemeData darkTheme() {
+    return Theme.of(context).copyWith();
   }
 }

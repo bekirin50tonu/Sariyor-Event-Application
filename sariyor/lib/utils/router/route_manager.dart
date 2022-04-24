@@ -10,94 +10,52 @@ class RouteManager {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RouteConstants.indexRoute:
-        return PageRouteBuilder(
-          settings: settings,
-          pageBuilder: (context, animation, secondaryAnimation) => IndexPage(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(0.0, 1.0);
-            const end = Offset.zero;
-            const curve = Curves.ease;
-
-            var tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-            return SlideTransition(
-              position: animation.drive(tween),
-              child: child,
-            );
-          },
-        );
+        return animationPageBuilder(IndexPage(), settings);
       case RouteConstants.loginRoute:
-        return PageRouteBuilder(
-          settings: settings,
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const LoginPage(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(0.0, 1.0);
-            const end = Offset.zero;
-            const curve = Curves.ease;
-
-            var tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-            return SlideTransition(
-              position: animation.drive(tween),
-              child: child,
-            );
-          },
-        );
+        return animationPageBuilder(LoginPage(), settings);
       case RouteConstants.splashRoute:
-        return PageRouteBuilder(
-          settings: settings,
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const OnBoardPage(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(0.0, 1.0);
-            const end = Offset.zero;
-            const curve = Curves.ease;
-
-            var tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-            return SlideTransition(
-              position: animation.drive(tween),
-              child: child,
-            );
-          },
-        );
+        return animationPageBuilder(OnBoardPage(), settings);
       case RouteConstants.registerRoute:
-        return PageRouteBuilder(
-          settings: settings,
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const RegisterPage(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(0.0, 1.0);
-            const end = Offset.zero;
-            const curve = Curves.ease;
-
-            var tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-            return SlideTransition(
-              position: animation.drive(tween),
-              child: child,
-            );
-          },
-        );
+        return animationPageBuilder(RegisterPage(), settings);
       default:
-        return MaterialPageRoute(
-            settings: settings, builder: (context) => _buildNotFoundWidget());
+        return normalPageBuilder(_buildNotFoundWidget(), settings);
     }
   }
 
-  static String get initialRoute {
+  static MaterialPageRoute<dynamic> normalPageBuilder(
+      Widget widget, RouteSettings settings) {
+    return MaterialPageRoute(settings: settings, builder: (context) => widget);
+  }
+
+  static PageRouteBuilder<dynamic> animationPageBuilder(
+      Widget widget, RouteSettings settings) {
+    return PageRouteBuilder(
+      settings: settings,
+      pageBuilder: (context, animation, secondaryAnimation) => widget,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
+  static Widget get initialRoute {
     final bool firstLaunch = Prefs.getBool('firstLaunch') ?? true;
     final bool isAuth = Prefs.getString('token') != '' ? true : false;
     return isAuth
-        ? RouteConstants.indexRoute
+        ? IndexPage()
         : firstLaunch
-            ? RouteConstants.splashRoute
-            : RouteConstants.registerRoute;
+            ? const OnBoardPage()
+            : const RegisterPage();
   }
 
   static Scaffold _buildNotFoundWidget() {

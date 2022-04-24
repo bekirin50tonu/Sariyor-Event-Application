@@ -57,6 +57,14 @@ class LoginCubit extends Cubit<BaseState> {
         return;
       }
       log(e.message);
+      if (e.response == null) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text(
+                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
+        emit(const IdleState());
+        passwordController.text = '';
+        return;
+      }
       if (e.response!.statusCode == 422) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(e.response!.data['errors'].join('\n'))));

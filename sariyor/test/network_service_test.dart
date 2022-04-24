@@ -1,3 +1,5 @@
+ ///////// ignore: unused_local_variable
+
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
@@ -17,6 +19,7 @@ void main() {
         var response = await service.post('/event/get', data: {"id": 32});
 
         if (response.statusCode == 200) {
+         
           bool status = response.data['success'];
           String message = response.data['message'];
           List<dynamic>? data = response.data['data'];
@@ -53,7 +56,6 @@ void main() {
         if (e.response!.statusCode == 422) {
           log('ehehehe');
         }
-        ;
       }
     });
 

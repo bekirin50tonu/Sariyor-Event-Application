@@ -33,6 +33,6 @@ class JoinedEvent extends Model
 
     public function event(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(Events::class, 'id', 'event_id');
+        return $this->hasOne(Events::class, 'id', 'event_id')->with('user:id,first_name,last_name,username,email,image_path')->with('category:id,name,image_path');
     }
 }

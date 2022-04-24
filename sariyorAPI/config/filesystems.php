@@ -64,6 +64,13 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
+        'dummy' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/dummy_images'),
+            'url' => env('APP_URL').'/image/dummy',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
 
         's3' => [
             'driver' => 's3',

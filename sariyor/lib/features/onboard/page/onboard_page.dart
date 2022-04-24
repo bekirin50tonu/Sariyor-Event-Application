@@ -1,10 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:sariyor/constants/route_constant.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnBoardPage extends StatefulWidget {
-  OnBoardPage({Key? key}) : super(key: key);
+  const OnBoardPage({Key? key}) : super(key: key);
 
   @override
   State<OnBoardPage> createState() => _OnBoardPageState();
@@ -104,6 +105,9 @@ class _OnBoardPageState extends State<OnBoardPage> {
                         ),
                         onPressed: () {
                           if (selected_page == max_page_count - 1) {
+                            Navigator.pushNamedAndRemoveUntil(context,
+                                RouteConstants.registerRoute, (route) => false);
+                            return;
                           } else {
                             _pageController.nextPage(
                                 duration: const Duration(milliseconds: 500),

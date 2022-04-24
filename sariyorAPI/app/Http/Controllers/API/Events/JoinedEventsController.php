@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\Classes\CustomJsonResponse;
 use App\Http\Requests\Event\JoinedEvents\JoinedRequest;
 use App\Services\EventService;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Request;
 
 class JoinedEventsController extends Controller
 {
@@ -23,4 +23,12 @@ class JoinedEventsController extends Controller
         $user = $request->user();
         return $service->exitEvent($user, $request->all());
     }
+
+    public function getJoinedEvents(Request $request,EventService $service)
+    {
+        $user = $request->user();
+        return $service->getJoinedEvents($user);
+    }
+
+
 }

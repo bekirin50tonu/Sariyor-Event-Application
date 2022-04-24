@@ -24,6 +24,8 @@ class Events extends Model
         'end_time' => 'datetime',
         'join_start_time' => 'datetime',
         'join_end_time' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime'
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\HasOne

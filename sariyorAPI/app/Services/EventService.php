@@ -101,4 +101,14 @@ class EventService
     }
 
 
+    public function getJoinedEvents(Authenticatable $user){
+        try {
+            $events = JoinedEvent::query()->orderByDesc('updated_at')->with('user:id,first_name,last_name,username,email,image_path')->with('event')->get();
+            return new CustomJsonResponse(200, 'Etkinlikler Başarıyla Getirildi.', $events->toArray());
+        } catch (\Exception $e) {
+            return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
+        }
+    }
+
+
 }

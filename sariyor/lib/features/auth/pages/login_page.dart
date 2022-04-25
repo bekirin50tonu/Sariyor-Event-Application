@@ -4,24 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sariyor/constants/route_constant.dart';
-import 'package:sariyor/features/auth/cubit/login_cubit.dart';
-import 'package:sariyor/utils/web_service/web_service.dart';
+import 'package:sariyor/features/auth/cubit/auth_cubit.dart';
 import 'package:sariyor/widgets/custom_check_form_field.dart';
 import 'package:sariyor/widgets/custom_elevated_button.dart';
 import 'package:sariyor/widgets/custom_text_form_field.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
-
+  LoginPage({Key? key}) : super(key: key);
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (context) =>
-            LoginCubit(service: WebService.getInstance(), context: context),
-        child: Scaffold(
-            body: BlocBuilder<LoginCubit, BaseState>(
+    return Scaffold(
+        key: scaffoldKey,
+        body: BlocBuilder<AuthCubit, BaseState>(
           builder: ((context, state) => buildLoginPage(context, state)),
-        )));
+        ));
   }
 
   Widget buildLoginPage(BuildContext context, BaseState state) {
@@ -108,8 +105,8 @@ class LoginPage extends StatelessWidget {
                                     }
                                   },
                                   controller: context
-                                      .watch<LoginCubit>()
-                                      .emailController,
+                                      .watch<AuthCubit>()
+                                      .emailLoginController,
                                   secureText: false,
                                 ),
                                 CustomTextFormField(
@@ -122,15 +119,15 @@ class LoginPage extends StatelessWidget {
                                     }
                                   },
                                   controller: context
-                                      .watch<LoginCubit>()
-                                      .passwordController,
+                                      .watch<AuthCubit>()
+                                      .passwordLoginController,
                                   secureText: true,
                                 ),
                                 CustomCheckFormField(
                                     state:
-                                        context.watch<LoginCubit>().rememberMe,
+                                        context.watch<AuthCubit>().rememberMe,
                                     onChanged: (value) {
-                                      context.read<LoginCubit>().rememberMe =
+                                      context.read<AuthCubit>().rememberMe =
                                           value;
                                     },
                                     text: 'Beni Hatırla.'),
@@ -153,7 +150,7 @@ class LoginPage extends StatelessWidget {
 
                                           if (_validate) {
                                             _formKey.currentState!.save();
-                                            context.read<LoginCubit>().login();
+                                            context.read<AuthCubit>().login();
                                           } else {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(const SnackBar(

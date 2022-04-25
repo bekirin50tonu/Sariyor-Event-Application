@@ -6,6 +6,7 @@ import 'package:sariyor/utils/locale/shared_preferences.dart';
 class WebService {
   static Dio getInstance() {
     Dio _inst = Dio(BaseOptions(
+      responseType: ResponseType.json,
       baseUrl: AppConstants.BASE_URL,
       connectTimeout: 5000,
       receiveTimeout: 10000,

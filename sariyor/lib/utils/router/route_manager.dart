@@ -3,6 +3,7 @@ import 'package:sariyor/constants/route_constant.dart';
 import 'package:sariyor/features/auth/pages/login_page.dart';
 import 'package:sariyor/features/auth/pages/register_page.dart';
 import 'package:sariyor/features/events/pages/index_page.dart';
+import 'package:sariyor/features/profile/pages/profile_page.dart';
 import 'package:sariyor/features/onboard/page/onboard_page.dart';
 import 'package:sariyor/utils/locale/shared_preferences.dart';
 
@@ -10,13 +11,20 @@ class RouteManager {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RouteConstants.indexRoute:
-        return animationPageBuilder(IndexPage(), settings);
+        return animationPageBuilder(const IndexPage(), settings);
       case RouteConstants.loginRoute:
         return animationPageBuilder(LoginPage(), settings);
       case RouteConstants.splashRoute:
-        return animationPageBuilder(OnBoardPage(), settings);
+        return animationPageBuilder(const OnBoardPage(), settings);
       case RouteConstants.registerRoute:
         return animationPageBuilder(RegisterPage(), settings);
+      case RouteConstants.profile:
+        return animationPageBuilder(
+            ProfilPage(
+              sehir: 'aydın',
+              userName: 'bekirin50tonu',
+            ),
+            settings);
       default:
         return normalPageBuilder(_buildNotFoundWidget(), settings);
     }
@@ -50,13 +58,15 @@ class RouteManager {
 
   static Widget get initialRoute {
     final bool firstLaunch = Prefs.getBool('firstLaunch') ?? true;
-    final bool isAuth = Prefs.getString('token') != '' ? true : false;
-    return LoginPage();
+    final bool isAuth =
+        Prefs.getString('token') != null || Prefs.getString('user') != null
+            ? true
+            : false;
     return isAuth
-        ? IndexPage()
+        ? const IndexPage()
         : firstLaunch
-            ? const OnBoardPage()
-            : const RegisterPage();
+            ? RegisterPage()
+            : const OnBoardPage();
   }
 
   static Scaffold _buildNotFoundWidget() {

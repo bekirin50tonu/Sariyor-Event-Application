@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sariyor/constants/route_constant.dart';
 import 'package:sariyor/enums/image_route_enum.dart';
 import 'package:sariyor/extensions/context_extensions.dart';
+import 'package:sariyor/features/auth/cubit/auth_cubit.dart';
+import 'package:sariyor/utils/router/route_service.dart';
 
 // ignore: must_be_immutable
 class CustomDrawer extends StatelessWidget {
@@ -57,16 +61,18 @@ class CustomDrawer extends StatelessWidget {
               )),
           Expanded(
             child: Column(
-              children: const [
-                ListTile(
+              children: [
+                const ListTile(
                   leading: Icon(Icons.home),
                   title: Text('Anasayfa'),
                 ),
                 ListTile(
                   leading: Icon(Icons.person),
                   title: Text('Profil'),
+                  onTap: () =>
+                      RouteService.instance.push(RouteConstants.profile, ""),
                 ),
-                ListTile(
+                const ListTile(
                   leading: Icon(Icons.event),
                   title: Text('Etkinlikler'),
                 ),
@@ -89,6 +95,7 @@ class CustomDrawer extends StatelessWidget {
                   ),
                 ),
                 ListTile(
+                  onTap: () => context.read<AuthCubit>().logout(),
                   leading: const Icon(Icons.logout_outlined),
                   title: Text(
                     'Çıkış Yap',

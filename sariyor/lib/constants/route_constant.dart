@@ -4,4 +4,5 @@ class RouteConstants {
   static const loginRoute = '/login';
   static const authRoute = '/auth';
   static const indexRoute = '/index';
+  static const profile = '/profile';
 }

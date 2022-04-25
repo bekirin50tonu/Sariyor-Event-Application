@@ -4,23 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sariyor/constants/route_constant.dart';
-import 'package:sariyor/features/auth/cubit/register_cubit.dart';
-import 'package:sariyor/utils/web_service/web_service.dart';
+import 'package:sariyor/features/auth/cubit/auth_cubit.dart';
 import 'package:sariyor/widgets/custom_check_form_field.dart';
 import 'package:sariyor/widgets/custom_elevated_button.dart';
 import 'package:sariyor/widgets/custom_text_form_field.dart';
 
 class RegisterPage extends StatelessWidget {
-  const RegisterPage({Key? key}) : super(key: key);
-
+  RegisterPage({Key? key}) : super(key: key);
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (context) => RegisterCubit(WebService.getInstance(), context),
-        child: Scaffold(
-            body: BlocBuilder<RegisterCubit, BaseState>(
+    return Scaffold(
+        key: scaffoldKey,
+        body: BlocBuilder<AuthCubit, BaseState>(
           builder: ((context, state) => buildRegisterPage(context, state)),
-        )));
+        ));
   }
 
   Widget buildRegisterPage(BuildContext context, BaseState state) {
@@ -102,7 +100,7 @@ class RegisterPage extends StatelessWidget {
                                     return null;
                                   },
                                   controller: context
-                                      .watch<RegisterCubit>()
+                                      .watch<AuthCubit>()
                                       .firstnameController,
                                   secureText: false,
                                 ),
@@ -115,7 +113,7 @@ class RegisterPage extends StatelessWidget {
                                     return null;
                                   },
                                   controller: context
-                                      .watch<RegisterCubit>()
+                                      .watch<AuthCubit>()
                                       .lastnameController,
                                   secureText: false,
                                 ),
@@ -128,7 +126,7 @@ class RegisterPage extends StatelessWidget {
                                     return null;
                                   },
                                   controller: context
-                                      .watch<RegisterCubit>()
+                                      .watch<AuthCubit>()
                                       .usernameController,
                                   secureText: false,
                                 ),
@@ -146,7 +144,7 @@ class RegisterPage extends StatelessWidget {
                                     }
                                   },
                                   controller: context
-                                      .watch<RegisterCubit>()
+                                      .watch<AuthCubit>()
                                       .emailController,
                                   secureText: false,
                                 ),
@@ -160,7 +158,7 @@ class RegisterPage extends StatelessWidget {
                                     }
                                   },
                                   controller: context
-                                      .watch<RegisterCubit>()
+                                      .watch<AuthCubit>()
                                       .passwordController,
                                   secureText: true,
                                 ),
@@ -168,7 +166,7 @@ class RegisterPage extends StatelessWidget {
                                   label: 'Şifrenizi Tekrar Giriniz',
                                   validator: (value) {
                                     if (context
-                                            .read<RegisterCubit>()
+                                            .read<AuthCubit>()
                                             .checkPasswordController
                                             .text ==
                                         value) {
@@ -177,17 +175,17 @@ class RegisterPage extends StatelessWidget {
                                     return 'Şifreler eşleşmiyor';
                                   },
                                   controller: context
-                                      .watch<RegisterCubit>()
+                                      .watch<AuthCubit>()
                                       .checkPasswordController,
                                   secureText: true,
                                 ),
                                 CustomCheckFormField(
                                     state: context
-                                        .watch<RegisterCubit>()
+                                        .watch<AuthCubit>()
                                         .mailCheckBoxState,
                                     onChanged: (value) {
                                       context
-                                          .read<RegisterCubit>()
+                                          .read<AuthCubit>()
                                           .mailCheckBoxState = value;
                                     },
                                     text:
@@ -205,7 +203,7 @@ class RegisterPage extends StatelessWidget {
                                       )
                                     : CustomElevatedButton(
                                         disabled: context
-                                            .watch<RegisterCubit>()
+                                            .watch<AuthCubit>()
                                             .mailCheckBoxState,
                                         onPressed: () {
                                           bool _validate =
@@ -214,7 +212,7 @@ class RegisterPage extends StatelessWidget {
                                           if (_validate) {
                                             _formKey.currentState!.save();
                                             context
-                                                .read<RegisterCubit>()
+                                                .read<AuthCubit>()
                                                 .register();
                                           } else {
                                             ScaffoldMessenger.of(context)

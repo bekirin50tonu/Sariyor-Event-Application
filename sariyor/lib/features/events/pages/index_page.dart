@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sariyor/enums/image_route_enum.dart';
 import 'package:sariyor/extensions/context_extensions.dart';
 import 'package:sariyor/extensions/datetime_extensions.dart';
+import 'package:sariyor/features/auth/service/auth_module.dart';
 import 'package:sariyor/features/events/cubit/event_cubit.dart';
 import 'package:sariyor/features/events/models/joined_event_response_model.dart';
 import 'package:sariyor/utils/web_service/web_service.dart';
@@ -21,24 +22,24 @@ class IndexPage extends StatefulWidget {
 }
 
 class _IndexPageState extends State<IndexPage> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => EventCubit(WebService.getInstance(), context),
-      child: Scaffold(
-        drawer: CustomDrawer(
-          fullName: 'Bekir Görmez',
-          userImage: '123',
-          userName: 'bekirin50tonu',
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        appBar: buildAppBarWidget(),
-        body: BlocBuilder<EventCubit, BaseState>(
-            builder: (context, state) => buildEventPage(context, state)),
-        bottomNavigationBar: buildBottomNavigationBarWidget(),
-        floatingActionButton: buildFloatingActionButtonWidget(context),
-      ),
-    );
+    return BlocBuilder<EventCubit, BaseState>(
+        builder: (context, state) => Scaffold(
+              key: scaffoldKey,
+              drawer: CustomDrawer(
+                fullName: Auth.user!.fullName ?? "boş",
+                userImage: Auth.user!.imagePath ?? "123",
+                userName: Auth.user!.username ?? "boş",
+              ),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerDocked,
+              appBar: buildAppBarWidget(),
+              body: buildEventPage(context, state),
+              bottomNavigationBar: buildBottomNavigationBarWidget(),
+              floatingActionButton: buildFloatingActionButtonWidget(context),
+            ));
   }
 
   FloatingActionButton buildFloatingActionButtonWidget(BuildContext context) {

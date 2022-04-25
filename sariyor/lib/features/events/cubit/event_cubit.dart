@@ -25,7 +25,6 @@ class EventCubit extends Cubit<BaseState> {
       var response = await service.get(URLConstants.get_all_joined_events);
       log(response.statusCode.toString());
       if (response.statusCode == 401) {
-        log(Prefs.getString('token') ?? 'Annennn');
         Prefs.setString('token', '');
         Navigator.pushNamedAndRemoveUntil(
             context, RouteConstants.loginRoute, (route) => false);
@@ -37,49 +36,6 @@ class EventCubit extends Cubit<BaseState> {
       events = model.events;
       log(events.length.toString());
       emit(const LoadedState());
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.connectTimeout) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
-        emit(const IdleState());
-        return;
-      }
-      if (e.type == DioErrorType.receiveTimeout) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
-        emit(const IdleState());
-        return;
-      }
-      if (e.response == null) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
-        emit(const IdleState());
-        return;
-      }
-      log(e.message);
-
-      emit(const IdleState());
-    }
-  }
-
-  Future<void> logOut() async {
-    try {
-      emit(const LoadingState());
-      var response = await service.post(URLConstants.logout);
-      if (response.statusCode == 401) {
-        Prefs.setString('token', '');
-        Navigator.pushNamedAndRemoveUntil(
-            context, RouteConstants.loginRoute, (route) => false);
-        return;
-      }
-      if (response.statusCode == 200) {
-        Prefs.setString('token', '');
-        Navigator.pushNamedAndRemoveUntil(
-            context, RouteConstants.loginRoute, (route) => false);
-      }
     } on DioError catch (e) {
       if (e.type == DioErrorType.connectTimeout) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

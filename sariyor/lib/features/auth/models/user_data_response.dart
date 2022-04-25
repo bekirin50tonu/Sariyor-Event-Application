@@ -62,6 +62,10 @@ class User {
       required this.createdAt,
       required this.updatedAt});
 
+  get fullName {
+    return "$firstName $lastName";
+  }
+
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
         id: json['id'],

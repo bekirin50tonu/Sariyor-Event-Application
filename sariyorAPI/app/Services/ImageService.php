@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Http\Helpers\EnumTypes\ImageRoute;
 use App\Http\Helpers\EnumTypes\ImageType;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,8 +12,13 @@ class ImageService
 {
     public function storeImage(UploadedFile $image, string $path): bool|string
     {
-        $image->store($path);
-        return $image->hashName();
+        try {
+            $image->store($path);
+            return $image->hashName();
+        } catch (\Throwable $e) {
+            Log::warning($e->getMessage());
+            return "";
+        }
     }
 
     public function getStoredImage(string $path, string $type): \Illuminate\Http\Response

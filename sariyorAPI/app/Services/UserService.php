@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserService
 {
@@ -51,6 +52,7 @@ class UserService
             $status = $user->update($params);
             return new CustomJsonResponse(200, 'Bilgiler Başarıyla Güncellendi', [$user->first()]);
         } catch (\Throwable $e) {
+            Log::error($e);
             return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
         }
     }

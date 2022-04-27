@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:sariyor/constants/route_constant.dart';
 import 'package:sariyor/features/auth/pages/login_page.dart';
 import 'package:sariyor/features/auth/pages/register_page.dart';
+import 'package:sariyor/features/auth/service/auth_module.dart';
 import 'package:sariyor/features/events/pages/index_page.dart';
-import 'package:sariyor/features/profile/pages/profile_page.dart';
 import 'package:sariyor/features/onboard/page/onboard_page.dart';
+import 'package:sariyor/features/user/pages/profile_page.dart';
 import 'package:sariyor/utils/locale/shared_preferences.dart';
 
 class RouteManager {
@@ -19,12 +20,7 @@ class RouteManager {
       case RouteConstants.registerRoute:
         return animationPageBuilder(RegisterPage(), settings);
       case RouteConstants.profile:
-        return animationPageBuilder(
-            ProfilPage(
-              sehir: 'aydın',
-              userName: 'bekirin50tonu',
-            ),
-            settings);
+        return animationPageBuilder(ProfilePage(), settings);
       default:
         return normalPageBuilder(_buildNotFoundWidget(), settings);
     }
@@ -59,7 +55,7 @@ class RouteManager {
   static Widget get initialRoute {
     final bool firstLaunch = Prefs.getBool('firstLaunch') ?? true;
     final bool isAuth =
-        Prefs.getString('token') != null || Prefs.getString('user') != null
+        Auth.instance!.token != null && Auth.instance!.token != null
             ? true
             : false;
     return isAuth

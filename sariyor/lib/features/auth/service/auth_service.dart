@@ -26,7 +26,7 @@ class AuthService {
       UserDataResponse model = UserDataResponse.fromJson(response.data!);
       var token = model.data.token;
       var user = model.data.user;
-      Auth.login(user, token, rememberMe);
+      Auth.instance!.login(user, token, rememberMe);
       onSuccess();
     } on DioError catch (e) {
       onError(e, e.message);
@@ -44,7 +44,7 @@ class AuthService {
       UserDataResponse model = UserDataResponse.fromJson(response.data!);
       var token = model.data.token;
       var user = model.data.user;
-      Auth.login(user, token, rememberMe);
+      Auth.instance!.login(user, token, rememberMe);
       onSuccess();
     } on DioError catch (e) {
       onError(e, e.message);
@@ -55,7 +55,7 @@ class AuthService {
       Function(DioError, String) onError) async {
     try {
       await service.post(URLConstants.logout);
-      Auth.logout();
+      Auth.instance!.logout();
       onSuccess();
     } on DioError catch (e) {
       onError(e, e.message);

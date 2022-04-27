@@ -4,20 +4,12 @@ import 'package:sariyor/constants/route_constant.dart';
 import 'package:sariyor/enums/image_route_enum.dart';
 import 'package:sariyor/extensions/context_extensions.dart';
 import 'package:sariyor/features/auth/cubit/auth_cubit.dart';
+import 'package:sariyor/features/auth/service/auth_module.dart';
 import 'package:sariyor/utils/router/route_service.dart';
 
 // ignore: must_be_immutable
 class CustomDrawer extends StatelessWidget {
-  CustomDrawer(
-      {Key? key,
-      required this.fullName,
-      required this.userName,
-      required this.userImage})
-      : super(key: key);
-
-  String fullName;
-  String userName;
-  String userImage;
+  const CustomDrawer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,15 +38,15 @@ class CustomDrawer extends StatelessWidget {
                   CircleAvatar(
                     radius: 30,
                     backgroundColor: Colors.transparent,
-                    backgroundImage:
-                        NetworkImage(ImageRouteType.profile.url(userImage)),
+                    backgroundImage: NetworkImage(ImageRouteType.profile
+                        .url(Auth.instance!.user!.imagePath!)),
                   ),
                   Text(
-                    fullName,
+                    Auth.instance!.user!.fullName,
                     style: context.themeText.headline5,
                   ),
                   Text(
-                    '@$userName',
+                    '@${Auth.instance!.user!.username}',
                     style: context.themeText.headline6,
                   ),
                 ],

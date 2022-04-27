@@ -33,6 +33,20 @@ class WebService {
             queryParameters: error.requestOptions.queryParameters);
         return handler.resolve(req);
       }
+      if (error.response == null) {
+        final opt = Options(
+            followRedirects: false,
+            validateStatus: (status) {
+              return status! < 500;
+            },
+            method: error.requestOptions.method,
+            headers: error.requestOptions.headers);
+        final req = await _inst.request(error.requestOptions.path,
+            options: opt,
+            data: error.requestOptions.data,
+            queryParameters: error.requestOptions.queryParameters);
+        return handler.resolve(req);
+      }
       handler.next(error);
     }));
     return _inst;

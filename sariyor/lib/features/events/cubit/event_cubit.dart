@@ -5,78 +5,55 @@ import 'package:flutter/material.dart';
 import 'package:sariyor/constants/url_constant.dart';
 import 'package:sariyor/features/events/models/joined_event_response_model.dart';
 import 'package:sariyor/utils/locale/shared_preferences.dart';
+import 'package:sariyor/utils/router/route_service.dart';
 
 import '../../../constants/route_constant.dart';
 
-class EventCubit extends Cubit<BaseState> {
+class EventCubit extends Cubit<EventBaseState> {
   final Dio service;
   final BuildContext context;
-  List<JoinedEvent> events = [];
   bool isJoin = false;
-  EventCubit(this.service, this.context) : super(const IdleState());
-
-  Future<void> isJoinEvent() async {
-    isJoin = !isJoin;
-  }
+  EventCubit(this.service, this.context) : super(const EventIdleState());
 
   Future<void> getAlljoinedEvents() async {
     try {
-      emit(const LoadingState());
+      log("yükleniyor..");
+      emit(const EventLoadingState());
       var response = await service.get(URLConstants.get_all_joined_events);
       log(response.statusCode.toString());
       if (response.statusCode == 401) {
         Prefs.setString('token', '');
-        Navigator.pushNamedAndRemoveUntil(
-            context, RouteConstants.loginRoute, (route) => false);
+        RouteService.instance.push(RouteConstants.loginRoute, "");
         return;
       }
       JoinedEventResponseModel model =
           JoinedEventResponseModel.fromJson(response.data!);
-      events = [];
-      events = model.events;
-      log(events.length.toString());
-      emit(const LoadedState());
+      log(model.events.length.toString());
+      emit(EventLoadedState(model.events));
     } on DioError catch (e) {
-      if (e.type == DioErrorType.connectTimeout) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
-        emit(const IdleState());
-        return;
-      }
-      if (e.type == DioErrorType.receiveTimeout) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
-        emit(const IdleState());
-        return;
-      }
-      if (e.response == null) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
-        emit(const IdleState());
-        return;
-      }
-      log(e.message);
-
-      emit(const IdleState());
+      emit(EventErrorState(e.message));
     }
   }
 }
 
-abstract class BaseState {
-  const BaseState();
+abstract class EventBaseState {
+  const EventBaseState();
 }
 
-class IdleState extends BaseState {
-  const IdleState();
+class EventIdleState extends EventBaseState {
+  const EventIdleState();
 }
 
-class LoadingState extends BaseState {
-  const LoadingState();
+class EventLoadingState extends EventBaseState {
+  const EventLoadingState();
 }
 
-class LoadedState extends BaseState {
-  const LoadedState();
+class EventLoadedState extends EventBaseState {
+  List<JoinedEvent> events;
+  EventLoadedState(this.events);
+}
+
+class EventErrorState extends EventBaseState {
+  String error;
+  EventErrorState(this.error);
 }

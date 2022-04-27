@@ -5,41 +5,49 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sariyor/enums/image_route_enum.dart';
 import 'package:sariyor/extensions/context_extensions.dart';
 import 'package:sariyor/extensions/datetime_extensions.dart';
-import 'package:sariyor/features/auth/service/auth_module.dart';
 import 'package:sariyor/features/events/cubit/event_cubit.dart';
 import 'package:sariyor/features/events/models/joined_event_response_model.dart';
-import 'package:sariyor/utils/web_service/web_service.dart';
+import 'package:sariyor/features/user/cubit/user_cubit.dart';
 import 'package:sariyor/widgets/custom_drawer_field.dart';
 import 'package:sariyor/widgets/custom_elevated_button.dart';
 import 'package:sariyor/widgets/event_card_widget.dart';
 
 class IndexPage extends StatefulWidget {
   const IndexPage({Key? key}) : super(key: key);
-  static bool isJoin = true;
 
   @override
   State<IndexPage> createState() => _IndexPageState();
 }
 
 class _IndexPageState extends State<IndexPage> {
-  final scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventCubit, BaseState>(
-        builder: (context, state) => Scaffold(
-              key: scaffoldKey,
-              drawer: CustomDrawer(
-                fullName: Auth.user!.fullName ?? "boş",
-                userImage: Auth.user!.imagePath ?? "123",
-                userName: Auth.user!.username ?? "boş",
-              ),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
-              appBar: buildAppBarWidget(),
-              body: buildEventPage(context, state),
-              bottomNavigationBar: buildBottomNavigationBarWidget(),
-              floatingActionButton: buildFloatingActionButtonWidget(context),
-            ));
+    return BlocConsumer<EventCubit, EventBaseState>(
+      listener: (context, state) async {
+        if (state is EventErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Center(child: Text(state.error))));
+        }
+      },
+      builder: (context, state) => buildScaffold(state, context),
+    );
+  }
+
+  Scaffold buildScaffold(EventBaseState state, BuildContext context) {
+    if (state is EventIdleState) {
+      context.read<EventCubit>().getAlljoinedEvents();
+      context.read<UserCubit>().getUserData();
+    }
+    return Scaffold(
+      drawer: const CustomDrawer(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      appBar: buildAppBarWidget(),
+      body: state is EventLoadingState
+          ? const Center(child: CircularProgressIndicator.adaptive())
+          : buildEventPage(context, state),
+      bottomNavigationBar: buildBottomNavigationBarWidget(),
+      floatingActionButton: buildFloatingActionButtonWidget(context),
+    );
   }
 
   FloatingActionButton buildFloatingActionButtonWidget(BuildContext context) {
@@ -47,6 +55,11 @@ class _IndexPageState extends State<IndexPage> {
       backgroundColor: const Color.fromARGB(255, 85, 72, 164),
       onPressed: () {
         showModalBottomSheet(
+            isScrollControlled: true,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(40.0),
+            ),
+            backgroundColor: Colors.white,
             context: context,
             builder: (_) => buildDraggableCreateEvent(context));
       },
@@ -105,30 +118,30 @@ class _IndexPageState extends State<IndexPage> {
     );
   }
 
-  Widget buildEventPage(BuildContext context, BaseState state) {
-    if (state is IdleState) {
-      context.read<EventCubit>().getAlljoinedEvents();
-    }
+  Widget buildEventPage(BuildContext context, EventBaseState state) {
     return Container(
       decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage('images/background.jpg'), fit: BoxFit.cover)),
       child: RefreshIndicator(
         onRefresh: () async {
-          return context.read<EventCubit>().getAlljoinedEvents();
+          context.read<EventCubit>().getAlljoinedEvents();
+          context.read<UserCubit>().getUserData();
         },
-        child: buildEventCard(
-          context,
-        ),
+        child: state is EventLoadedState
+            ? buildEventCard(context, state.events)
+            : const Center(
+                child: CircularProgressIndicator.adaptive(),
+              ),
       ),
     );
   }
 
-  Widget buildEventCard(BuildContext context) {
+  Widget buildEventCard(BuildContext context, List<JoinedEvent> events) {
     return ListView.builder(
-        itemCount: context.watch<EventCubit>().events.length,
+        itemCount: events.length,
         itemBuilder: (context, index) {
-          var data = context.watch<EventCubit>().events[index];
+          var data = events[index];
           return EventCard(
             userName: data.user.fullName,
             userImage: data.user.imagePath!,
@@ -268,14 +281,8 @@ class _IndexPageState extends State<IndexPage> {
           child: CustomElevatedButton(
             label: 'Ayrılmak İstiyorum',
             deactiveLabel: 'Katılmak İstiyorum',
-            onPressed: () {
-              log('geldi');
-              IndexPage.isJoin = !IndexPage.isJoin;
-            },
-            onPressedDisabled: () {
-              log('ühühüüüü');
-              IndexPage.isJoin = !IndexPage.isJoin;
-            },
+            onPressed: () {},
+            onPressedDisabled: () {},
             disabled: false,
           ),
         ),
@@ -284,7 +291,7 @@ class _IndexPageState extends State<IndexPage> {
   }
 
   Widget buildDraggableCreateEvent(BuildContext context) {
-    return Column(
+    return Wrap(
       children: const [
         Center(child: Text('Etkinlik Ekleme Buraya Gelecek!!!'))
       ],

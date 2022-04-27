@@ -28,7 +28,7 @@ class _CustomElevatedButtonState extends State<CustomElevatedButton> {
     return ElevatedButton(
         onPressed: widget.disabled
             ? null
-            : IndexPage.isJoin
+            : true
                 ? () {
                     setState(() {
                       widget.onPressed!();
@@ -39,7 +39,7 @@ class _CustomElevatedButtonState extends State<CustomElevatedButton> {
                       widget.onPressedDisabled!();
                     });
                   },
-        child: Text(IndexPage.isJoin ? widget.label : widget.deactiveLabel),
+        child: Text(true ? widget.label : widget.deactiveLabel),
         style: ElevatedButton.styleFrom(
             disabledMouseCursor: MouseCursor.uncontrolled,
             minimumSize: const Size(350, 50),

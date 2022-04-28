@@ -34,14 +34,19 @@ Route::prefix('friend')->middleware(['auth:sanctum'])->group(function () {
 });
 
 Route::prefix('event')->middleware(['auth:sanctum'])->group(function () {
-    Route::get('all',[\App\Http\Controllers\API\Events\EventsController::class,'getAllEvent'])->name('event.all');
-    Route::get('get_joined',[\App\Http\Controllers\API\Events\JoinedEventsController::class,'getJoinedEvents'])->name('event.joined');
+    Route::get('by_category',[\App\Http\Controllers\API\Events\EventsController::class,'getByCategory'])->name('event.category.get');
+    Route::get('all', [\App\Http\Controllers\API\Events\EventsController::class, 'getAllEvent'])->name('event.all');
+    Route::get('get_joined', [\App\Http\Controllers\API\Events\JoinedEventsController::class, 'getJoinedEvents'])->name('event.joined');
     Route::post('create', [\App\Http\Controllers\API\Events\EventsController::class, 'createEvent'])->name('create');
     Route::post('delete', [\App\Http\Controllers\API\Events\EventsController::class, 'deleteEvent'])->middleware(['isOwner'])->name('event.delete');
     Route::post('update', [\App\Http\Controllers\API\Events\EventsController::class, 'updateEvent'])->middleware(['isOwner'])->name('event.update');
     Route::post('join', [\App\Http\Controllers\API\Events\JoinedEventsController::class, 'joinEvent'])->name('join');
     Route::post('exit', [\App\Http\Controllers\API\Events\JoinedEventsController::class, 'exitEvent'])->name('exit');
     Route::post('get', [\App\Http\Controllers\API\Events\EventsController::class, 'getEvent'])->name('event.get');
+});
+
+Route::prefix('category')->middleware('auth:sanctum')->group(function () {
+    Route::get('get', [\App\Http\Controllers\API\Category\CategoryController::class, 'index'])->name('category.get');
 });
 
 Route::prefix('user')->middleware(['auth:sanctum'])->group(function () {

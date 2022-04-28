@@ -5,6 +5,7 @@ import 'package:sariyor/enums/image_route_enum.dart';
 import 'package:sariyor/extensions/context_extensions.dart';
 import 'package:sariyor/features/auth/cubit/auth_cubit.dart';
 import 'package:sariyor/features/auth/service/auth_module.dart';
+import 'package:sariyor/features/user/cubit/user_cubit.dart';
 import 'package:sariyor/utils/router/route_service.dart';
 
 // ignore: must_be_immutable
@@ -39,7 +40,7 @@ class CustomDrawer extends StatelessWidget {
                     radius: 30,
                     backgroundColor: Colors.transparent,
                     backgroundImage: NetworkImage(ImageRouteType.profile
-                        .url(Auth.instance!.user!.imagePath!)),
+                        .url(Auth.instance!.user!.imagePath)),
                   ),
                   Text(
                     Auth.instance!.user!.fullName,
@@ -59,11 +60,13 @@ class CustomDrawer extends StatelessWidget {
                   title: Text('Anasayfa'),
                 ),
                 ListTile(
-                  leading: Icon(Icons.person),
-                  title: Text('Profil'),
-                  onTap: () =>
-                      RouteService.instance.push(RouteConstants.profile, ""),
-                ),
+                    leading: const Icon(Icons.person),
+                    title: const Text('Profil'),
+                    onTap: () {
+                      context.read<UserCubit>().changeState();
+                      RouteService.instance.push(
+                          RouteConstants.profile, Auth.instance!.user!.id);
+                    }),
                 const ListTile(
                   leading: Icon(Icons.event),
                   title: Text('Etkinlikler'),

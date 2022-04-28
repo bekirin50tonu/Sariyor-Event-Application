@@ -26,7 +26,7 @@ class ProfileCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(35),
               image: DecorationImage(
                   image: NetworkImage(ImageRouteType.profile
-                      .url(Auth.instance!.user!.imagePath!)),
+                      .url(Auth.instance!.user!.imagePath)),
                   fit: BoxFit.cover)),
         ),
         Text(

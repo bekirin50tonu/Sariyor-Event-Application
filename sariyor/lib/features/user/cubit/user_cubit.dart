@@ -1,14 +1,15 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:http_parser/http_parser.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sariyor/features/auth/models/user_data_response.dart';
+import 'package:sariyor/constants/url_constant.dart';
 import 'package:sariyor/features/auth/service/auth_module.dart';
+import 'package:sariyor/features/events/models/base/base_friendship_model.dart';
 import 'package:sariyor/features/user/services/user_service.dart';
+
+import '../../events/models/base/base_user_model.dart';
 
 class UserCubit extends Cubit<UserBaseState> {
   GlobalKey globalKey = GlobalKey();
@@ -25,12 +26,18 @@ class UserCubit extends Cubit<UserBaseState> {
   UserCubit(this.service, this.context) : super(const UserIdleState());
   Dio service;
 
+  Future<void> changeState() async {
+    emit(const UserIdleState());
+  }
+
   Future<void> photoSelected(File file) async {
+    log("state değiş");
     emit(const UserLoadingState());
     log(file.path);
     image = file;
-
-    emit(UserCacheImageState(image!));
+    await Future.delayed(const Duration(milliseconds: 1000));
+    emit(UserLoadedState(user: user!, image: image));
+    log("state değişti");
   }
 
   Future<void> updateProfile() async {
@@ -47,71 +54,53 @@ class UserCubit extends Cubit<UserBaseState> {
           usernameController.text.trim(),
           emailController.text.trim());
       Auth.instance!.user = user;
-      log("gitti");
-      emit(const UserLoadedState());
+      if (user != null) {
+        emit(UserLoadedState(user: user!));
+        return;
+      }
+      emit(const UserIdleState());
     } on DioError catch (error) {
-      if (error.type == DioErrorType.connectTimeout) {
-        emit(UserErrorState(
-            'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.'));
-        return;
-      }
-      if (error.type == DioErrorType.receiveTimeout) {
-        emit(UserErrorState(
-            'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.'));
-        return;
-      }
-      if (error.response == null) {
-        emit(UserErrorState(
-            'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.'));
-        return;
-      }
-      if (error.response!.statusCode == 422) {
-        emit(UserErrorState(error.response!.data['errors'].join('\n')));
-        return;
-      }
-      if (error.response!.statusCode == 403) {
-        emit(UserErrorState(error.message));
-        return;
-      }
-      log(error.message);
-      emit(UserErrorState(error.message));
+      emit(UserErrorState(error.response!.data["message"]));
     }
   }
 
-  Future<void> getUserData() async {
+  Future<void> getUserData(int id) async {
     try {
       emit(const UserLoadingState());
-      user = await UserService(service).getUserData();
-      Auth.instance!.user = user;
-      firstnameController.text = user!.firstName;
-      lastnameController.text = user!.lastName;
-      emailController.text = user!.email;
-      usernameController.text = user!.username;
-      emit(const UserLoadedState());
+      var _user = await UserService(service).getUserData(id);
+      user = _user;
+      if (_user!.id == Auth.instance!.user!.id) {
+        Auth.instance!.user = _user;
+        firstnameController.text = _user!.firstName;
+        lastnameController.text = _user!.lastName;
+        emailController.text = _user!.email;
+        usernameController.text = _user!.username;
+      }
+      emit(UserLoadedState(user: _user));
     } on DioError catch (error) {
-      if (error.type == DioErrorType.connectTimeout) {
-        emit(UserErrorState(
-            'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.'));
-        return;
-      }
-      if (error.type == DioErrorType.receiveTimeout) {
-        emit(UserErrorState(
-            'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.'));
-        return;
-      }
-      if (error.response == null) {
-        emit(UserErrorState(
-            'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.'));
-        return;
-      }
-      if (error.response!.statusCode == 422) {
-        emit(UserErrorState(error.response!.data['errors'].join('\n')));
-        return;
-      }
-      log(error.message);
-      emit(UserErrorState(error.message));
+      emit(UserErrorState(error.response!.data["message"]));
     }
   }
+
+  Future<void> addFriend(int id) async {
+    emit(const UserLoadingState());
+    var response =
+        await service.post(URLConstants.addFriend, data: {"user_id": id});
+    if (response.statusCode == 200) {
+      emit(UserLoadedState(user: user!));
+    }
+    emit(const UserIdleState());
+  }
+
+  Future<void> removeFriend(int id) async {
+    emit(const UserLoadingState());
+    var response = await service.post(URLConstants.addFriend, data: {"id": id});
+    if (response.statusCode == 200) {
+      emit(UserLoadedState(user: user!));
+    }
+    emit(const UserIdleState());
+  }
+
 }
 
 abstract class UserBaseState {
@@ -127,15 +116,13 @@ class UserLoadingState extends UserBaseState {
 }
 
 class UserLoadedState extends UserBaseState {
-  const UserLoadedState();
+  User user;
+  File? image;
+  UserLoadedState({required this.user, this.image});
 }
 
 class UserErrorState extends UserBaseState {
   String error;
-  UserErrorState(this.error);
-}
 
-class UserCacheImageState extends UserBaseState {
-  File image;
-  UserCacheImageState(this.image);
+  UserErrorState(this.error);
 }

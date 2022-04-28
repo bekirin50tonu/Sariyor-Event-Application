@@ -1,3 +1,6 @@
+import 'base/base_category_model.dart';
+import 'base/base_user_model.dart';
+
 class EventPaginateResponse {
   bool success;
   String message;
@@ -116,43 +119,6 @@ class Event {
         updatedAt: DateTime.parse(json['updated_at']),
         user: User.fromJson(json['user']),
         category: Category.fromJson(json['category']));
-  }
-}
-
-class User {
-  int id;
-  String firstName;
-  String lastName;
-  String username;
-  String? imagePath;
-
-  User(
-      {required this.id,
-      required this.firstName,
-      required this.lastName,
-      required this.username,
-      this.imagePath});
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-        id: json['id'],
-        firstName: json['first_name'],
-        lastName: json['last_name'],
-        username: json['username'],
-        imagePath: json['image_path']);
-  }
-}
-
-class Category {
-  int id;
-  String name;
-  String? imagePath;
-
-  Category({required this.id, required this.name, this.imagePath});
-
-  factory Category.fromJson(Map<String, dynamic> json) {
-    return Category(
-        id: json['id'], name: json['name'], imagePath: json['image_path']);
   }
 }
 

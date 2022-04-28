@@ -3,14 +3,25 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:sariyor/enums/image_route_enum.dart';
 
-import '../features/events/models/base/base_event_model.dart';
-
 // ignore: must_be_immutable
-class EventCard extends StatelessWidget {
-  EventCard({Key? key, required this.event, required this.onTab})
+class JoinedEventCard extends StatelessWidget {
+  JoinedEventCard(
+      {Key? key,
+      required this.userName,
+      this.userImage,
+      required this.eventName,
+      this.eventImage,
+      required this.timeForHuman,
+      required this.locate,
+      required this.onTab})
       : super(key: key);
   Color appbarColor = Colors.pink;
-  Event event;
+  String userName;
+  String eventName;
+  String? userImage;
+  String? eventImage;
+  String timeForHuman;
+  String locate;
   Function onTab;
 
   @override
@@ -40,16 +51,17 @@ class EventCard extends StatelessWidget {
                     radius: 45,
                     backgroundColor: Colors.transparent,
                     backgroundImage: NetworkImage(
-                      ImageRouteType.category.url(event.category.imagePath!),
+                      ImageRouteType.profile.url(userImage!),
                     ),
                   ),
-                  title: Text(event.name),
-                  subtitle: Text(event.description),
+                  title: Text(userName),
+                  subtitle:
+                      Text('$eventName Etkinliğine katıldı.\n$timeForHuman'),
                 ),
-                event.imagePath != null
+                eventImage != null
                     ? Expanded(
                         child: Image.network(
-                          ImageRouteType.event.url(event.imagePath!),
+                          ImageRouteType.event.url(eventImage!),
                           fit: BoxFit.cover,
                         ),
                       )

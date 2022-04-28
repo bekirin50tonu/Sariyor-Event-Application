@@ -18,7 +18,6 @@ class AddFriendController extends Controller
             $user = $request->user();
             $receiver['request_user_id'] = $user->id;
             $receiver['response_user_id'] = $request['user_id'];
-            print_r($request->get('user_id'));
             if ($receiver['request_user_id'] == $receiver['response_user_id']) {
                 return new CustomJsonResponse(403, 'Kendini Arkadaş Olarak Ekleyemezsin.', []);
             }
@@ -61,7 +60,7 @@ class AddFriendController extends Controller
     {
         try {
             $user = $request->user();
-            $quests = AddFriend::query()->where('response_user_id', $user->id)->get();
+            $quests = AddFriend::query()->where('response_user_id', $user->id)->with('user')->get();
             return new CustomJsonResponse(200, 'Arkadaşlık İstekleri Başarıyla Getirildi.', $quests->toArray());
         } catch (\Exception $e) {
             return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());

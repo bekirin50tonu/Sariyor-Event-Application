@@ -1,3 +1,5 @@
+import '../../events/models/base/base_user_model.dart';
+
 class UserDataResponse {
   bool success;
   String message;
@@ -36,60 +38,6 @@ class Data {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['user'] = user.toJson();
     data['token'] = token;
-    return data;
-  }
-}
-
-class User {
-  int id;
-  String firstName;
-  String lastName;
-  String username;
-  String email;
-  String? imagePath;
-  DateTime? emailVerifiedAt;
-  DateTime createdAt;
-  DateTime updatedAt;
-
-  User(
-      {required this.id,
-      required this.firstName,
-      required this.lastName,
-      required this.username,
-      required this.email,
-      this.emailVerifiedAt,
-      this.imagePath,
-      required this.createdAt,
-      required this.updatedAt});
-
-  get fullName {
-    return "$firstName $lastName";
-  }
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-        id: json['id'],
-        firstName: json['first_name'],
-        lastName: json['last_name'],
-        username: json['username'],
-        email: json['email'],
-        createdAt: DateTime.parse(json['created_at']),
-        updatedAt: DateTime.parse(json['updated_at']),
-        emailVerifiedAt: DateTime.parse(json['email_verified_at']),
-        imagePath: json['image_path']);
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['first_name'] = firstName;
-    data['last_name'] = lastName;
-    data['username'] = username;
-    data['email'] = email;
-    data['image_path'] = imagePath;
-    data['email_verified_at'] = emailVerifiedAt!.toIso8601String();
-    data['created_at'] = createdAt.toIso8601String();
-    data['updated_at'] = updatedAt.toIso8601String();
     return data;
   }
 }

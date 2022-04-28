@@ -11,5 +11,12 @@ class Categories extends Model
 
     protected $table = 'categories';
 
-    protected $fillable = ['name','image_path'];
+    protected $fillable = ['name', 'image_path'];
+
+    protected $appends = ['count'];
+
+    public function getCountAttribute(): int
+    {
+        return $this->hasMany(Events::class,'cat_id','id')->count();
+    }
 }

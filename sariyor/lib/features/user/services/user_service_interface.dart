@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:dio/dio.dart';
-import 'package:sariyor/features/auth/models/user_data_response.dart';
+
+import '../../events/models/base/base_user_model.dart';
 
 abstract class IUserService {
   Future<User?> updateData(
@@ -9,5 +9,5 @@ abstract class IUserService {
 
   Future<void> updateImage(File image);
 
-  Future<User?> getUserData();
+  Future<User?> getUserData(int id);
 }

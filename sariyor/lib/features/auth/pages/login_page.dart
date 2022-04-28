@@ -14,14 +14,21 @@ class LoginPage extends StatelessWidget {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        key: scaffoldKey,
-        body: BlocBuilder<AuthCubit, BaseState>(
-          builder: ((context, state) => buildLoginPage(context, state)),
-        ));
+    return BlocConsumer<AuthCubit, AuthBaseState>(
+      listener: (context, state) {
+        if (state is AuthErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Center(
+            child: Text(state.message),
+          )));
+        }
+      },
+      builder: (context, state) =>
+          Scaffold(key: scaffoldKey, body: buildLoginPage(context, state)),
+    );
   }
 
-  Widget buildLoginPage(BuildContext context, BaseState state) {
+  Widget buildLoginPage(BuildContext context, AuthBaseState state) {
     final _formKey = GlobalKey<FormState>();
     return SafeArea(
       child: Stack(
@@ -134,7 +141,7 @@ class LoginPage extends StatelessWidget {
                                 const SizedBox(
                                   height: 8,
                                 ),
-                                state is LoadingState
+                                state is AuthLoadingState
                                     ? const SizedBox(
                                         width: 350,
                                         height: 50,

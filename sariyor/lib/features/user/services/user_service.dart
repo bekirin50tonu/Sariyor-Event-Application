@@ -1,12 +1,14 @@
+
 import 'dart:developer';
 import 'dart:io';
-import 'package:http_parser/http_parser.dart';
-import 'package:dio/dio.dart';
-import 'package:sariyor/constants/url_constant.dart';
-import 'package:sariyor/features/user/models/update_user_request_model.dart';
-import 'package:sariyor/features/user/services/user_service_interface.dart';
 
-import '../../auth/models/user_data_response.dart';
+import 'package:dio/dio.dart';
+import 'package:sariyor/features/user/services/user_service_interface.dart';
+import 'package:http_parser/http_parser.dart';
+
+import '../../../constants/url_constant.dart';
+import '../../events/models/base/base_user_model.dart';
+import '../models/update_user_request_model.dart';
 
 class UserService extends IUserService {
   UserService(this.service);
@@ -51,8 +53,9 @@ class UserService extends IUserService {
   }
 
   @override
-  Future<User?> getUserData() async {
-    var response = await service.post(URLConstants.getUserData);
+  Future<User?> getUserData(int id) async {
+    var response =
+        await service.post(URLConstants.getUserData, data: {'id': id});
     if (response.statusCode == 200) {
       return User.fromJson(response.data['data'][0]);
     }

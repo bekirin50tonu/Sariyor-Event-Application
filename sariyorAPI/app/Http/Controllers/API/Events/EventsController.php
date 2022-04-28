@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\API\Events;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\Classes\CustomJsonResponse;
 use App\Http\Requests\Event\CRUD\CreateEventRequest;
+use App\Models\Events;
 use App\Services\EventService;
 use App\Services\ImageService;
 use Illuminate\Http\Request;
@@ -46,6 +48,18 @@ class EventsController extends Controller
         return $service->getFilteredEvents($request);
 
 
+    }
+
+    public function getByCategory(Request $request): CustomJsonResponse
+    {
+        try {
+            $cat_id = $request->input('id');
+            $user = $request->user();
+            $events = Events::query()->where('cat_id', $cat_id)->with('user:id,first_name,last_name,username,email,image_path')->with('category:id,name,image_path')->get()->toArray();
+            return new CustomJsonResponse(200, 'Kateroriye Göre Etkinlikler Getirildi', $events);
+        } catch (\Throwable $e) {
+            return new CustomJsonResponse(404, $e->getMessage(), $e->getTrace());
+        }
     }
 
 }

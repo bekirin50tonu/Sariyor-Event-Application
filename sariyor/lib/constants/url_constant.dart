@@ -7,4 +7,13 @@ class URLConstants {
   static const getUserData = '/user/get';
 
   static const get_all_joined_events = '/event/get_joined';
+  static const getCategories = '/category/get';
+  static const getEventByCategory = '/event/by_category';
+
+  // FRIEND
+
+  static const addFriend = '/friend/add';
+  static const removeFriend = '/friend/delete';
+
+  static const getFriendQuest = '/friend/request';
 }

@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:developer';
 
-import 'package:sariyor/features/auth/models/user_data_response.dart';
 import 'package:sariyor/utils/locale/shared_preferences.dart';
+
+import '../../events/models/base/base_user_model.dart';
 
 class Auth {
   static Auth? instance;

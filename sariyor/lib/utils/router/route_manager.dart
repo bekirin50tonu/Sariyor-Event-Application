@@ -3,8 +3,11 @@ import 'package:sariyor/constants/route_constant.dart';
 import 'package:sariyor/features/auth/pages/login_page.dart';
 import 'package:sariyor/features/auth/pages/register_page.dart';
 import 'package:sariyor/features/auth/service/auth_module.dart';
+import 'package:sariyor/features/events/pages/discover_page.dart';
+import 'package:sariyor/features/events/pages/event_page.dart';
 import 'package:sariyor/features/events/pages/index_page.dart';
 import 'package:sariyor/features/onboard/page/onboard_page.dart';
+import 'package:sariyor/features/user/pages/notification_page.dart';
 import 'package:sariyor/features/user/pages/profile_page.dart';
 import 'package:sariyor/utils/locale/shared_preferences.dart';
 
@@ -20,7 +23,15 @@ class RouteManager {
       case RouteConstants.registerRoute:
         return animationPageBuilder(RegisterPage(), settings);
       case RouteConstants.profile:
-        return animationPageBuilder(ProfilePage(), settings);
+        return animationPageBuilder(
+            ProfilePage(id: settings.arguments as int), settings);
+      case RouteConstants.discovery:
+        return animationPageBuilder(const DiscoveryPage(), settings);
+      case RouteConstants.eventRoute:
+        return animationPageBuilder(
+            EventPage(id: settings.arguments as int), settings);
+      case RouteConstants.notificationPage:
+        return animationPageBuilder(const NotificationPage(), settings);
       default:
         return normalPageBuilder(_buildNotFoundWidget(), settings);
     }

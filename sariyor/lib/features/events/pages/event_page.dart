@@ -2,56 +2,52 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sariyor/constants/route_constant.dart';
 import 'package:sariyor/enums/image_route_enum.dart';
 import 'package:sariyor/extensions/context_extensions.dart';
 import 'package:sariyor/extensions/datetime_extensions.dart';
 import 'package:sariyor/features/auth/service/auth_module.dart';
-import 'package:sariyor/features/events/cubit/event_cubit.dart';
-import 'package:sariyor/features/events/models/joined_event_response_model.dart';
+import 'package:sariyor/features/events/cubit/discovery_event_cubit.dart';
 import 'package:sariyor/features/user/cubit/user_cubit.dart';
-import 'package:sariyor/utils/router/route_service.dart';
 import 'package:sariyor/widgets/appbar_widget.dart';
 import 'package:sariyor/widgets/bottom_navigation_bar_widget.dart';
 import 'package:sariyor/widgets/custom_drawer_field.dart';
 import 'package:sariyor/widgets/custom_elevated_button.dart';
-import 'package:sariyor/widgets/joined_event_card_widget.dart';
+import 'package:sariyor/widgets/event_card_widget.dart';
 import 'package:sariyor/widgets/floating_action_button_widget.dart';
 
-class IndexPage extends StatefulWidget {
-  const IndexPage({Key? key}) : super(key: key);
+import '../models/base/base_event_model.dart';
 
-  @override
-  State<IndexPage> createState() => _IndexPageState();
-}
+// ignore: must_be_immutable
+class EventPage extends StatelessWidget {
+  int id;
+  EventPage({Key? key, required this.id}) : super(key: key);
 
-class _IndexPageState extends State<IndexPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<EventCubit, EventBaseState>(
+    return BlocConsumer<DiscoveryEventCubit, DiscoveryEventBaseState>(
       listener: (context, state) async {
-        if (state is EventErrorState) {
+        log(state.toString());
+        if (state is DiscoveryEventErrorState) {
           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Center(child: Text(state.error))));
+              SnackBar(content: Center(child: Text(state.message))));
         }
-        if (state is EventIdleState) {
-          context.read<EventCubit>().getAlljoinedEvents();
+        if (state is DiscoveryEventIdleState) {
+          context.read<DiscoveryEventCubit>().getEventsByCategory(id);
         }
       },
       builder: (context, state) => buildScaffold(state, context),
     );
   }
 
-  Scaffold buildScaffold(EventBaseState state, BuildContext context) {
-    if (state is EventIdleState) {
-      context.read<EventCubit>().getAlljoinedEvents();
-      context.read<UserCubit>().getUserData(Auth.instance!.user!.id);
+  Scaffold buildScaffold(DiscoveryEventBaseState state, BuildContext context) {
+    if (state is DiscoveryEventIdleState) {
+      context.read<DiscoveryEventCubit>().getEventsByCategory(id);
     }
     return Scaffold(
       drawer: const CustomDrawer(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       appBar: buildAppBarWidget(),
-      body: state is EventLoadingState
+      body: state is DiscoveryEventLoadingState
           ? const Center(child: CircularProgressIndicator.adaptive())
           : buildEventPage(context, state),
       bottomNavigationBar: const CustomBottomNavigationBar(),
@@ -59,17 +55,17 @@ class _IndexPageState extends State<IndexPage> {
     );
   }
 
-  Widget buildEventPage(BuildContext context, EventBaseState state) {
+  Widget buildEventPage(BuildContext context, DiscoveryEventBaseState state) {
     return Container(
       decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage('images/background.jpg'), fit: BoxFit.cover)),
       child: RefreshIndicator(
         onRefresh: () async {
-          context.read<EventCubit>().getAlljoinedEvents();
+          context.read<DiscoveryEventCubit>().getEventsByCategory(id);
           context.read<UserCubit>().getUserData(Auth.instance!.user!.id);
         },
-        child: state is EventLoadedState
+        child: state is DiscoveryEventLoadedState
             ? buildEventCard(context, state.events)
             : const Center(
                 child: CircularProgressIndicator.adaptive(),
@@ -78,18 +74,13 @@ class _IndexPageState extends State<IndexPage> {
     );
   }
 
-  Widget buildEventCard(BuildContext context, List<JoinedEvent> events) {
+  Widget buildEventCard(BuildContext context, List<Event> events) {
     return ListView.builder(
         itemCount: events.length,
         itemBuilder: (context, index) {
           var data = events[index];
-          return JoinedEventCard(
-            userName: data.user.fullName,
-            userImage: data.user.imagePath!,
-            eventName: data.event.name,
-            eventImage: data.event.imagePath!,
-            timeForHuman: data.timeStr,
-            locate: '',
+          return EventCard(
+            event: data,
             onTab: () {
               showModalBottomSheet(
                   isScrollControlled: true,
@@ -100,7 +91,7 @@ class _IndexPageState extends State<IndexPage> {
         });
   }
 
-  Widget buildDraggableEventDetail(BuildContext context, JoinedEvent event) {
+  Widget buildDraggableEventDetail(BuildContext context, Event event) {
     return Column(
       children: [
         const SizedBox(
@@ -111,7 +102,7 @@ class _IndexPageState extends State<IndexPage> {
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Image.network(
-              ImageRouteType.event.url(event.event.imagePath),
+              ImageRouteType.event.url(event.imagePath ?? "Nope"),
               width: double.infinity,
               height: 300,
               fit: BoxFit.scaleDown,
@@ -121,12 +112,12 @@ class _IndexPageState extends State<IndexPage> {
         ListTile(
           title: Center(
             child: Text(
-              event.event.name,
+              event.name,
               style: context.themeText.headline5,
             ),
           ),
           subtitle: Text(
-            event.event.description,
+            event.description,
             textAlign: TextAlign.justify,
             style: context.themeText.headline6,
           ),
@@ -135,31 +126,25 @@ class _IndexPageState extends State<IndexPage> {
           children: [
             Expanded(
               child: ListTile(
-                onTap: () {
-                  context.read<UserCubit>().changeState();
-                  log(event.event.owner.id.toString());
-                  RouteService.instance
-                      .push(RouteConstants.profile, event.event.owner.id);
-                },
                 leading: CircleAvatar(
                   backgroundColor: Colors.transparent,
                   backgroundImage: NetworkImage(
-                      ImageRouteType.profile.url(event.event.owner.imagePath!)),
+                      ImageRouteType.profile.url(event.owner.imagePath!)),
                 ),
                 title: const Text("Etkinliği Hazırlayan"),
-                subtitle: Text(
-                    "${event.event.owner.fullName} @${event.event.owner.username}"),
+                subtitle:
+                    Text("${event.owner.fullName} @${event.owner.username}"),
               ),
             ),
             Expanded(
               child: ListTile(
                 leading: CircleAvatar(
                   backgroundColor: Colors.transparent,
-                  backgroundImage: NetworkImage(ImageRouteType.category
-                      .url(event.event.category.imagePath!)),
+                  backgroundImage: NetworkImage(
+                      ImageRouteType.category.url(event.category.imagePath!)),
                 ),
                 title: const Text("Etkinlik Türü"),
-                subtitle: Text(event.event.category.name),
+                subtitle: Text(event.category.name),
               ),
             ),
           ],
@@ -186,20 +171,20 @@ class _IndexPageState extends State<IndexPage> {
               ListTile(
                 leading: CircleAvatar(
                   backgroundColor: Colors.transparent,
-                  backgroundImage: NetworkImage(ImageRouteType.category
-                      .url(event.event.category.imagePath!)),
+                  backgroundImage: NetworkImage(
+                      ImageRouteType.category.url(event.category.imagePath!)),
                 ),
                 title: const Text("Etkinlik Türü"),
-                subtitle: Text(event.event.category.name),
+                subtitle: Text(event.category.name),
               ),
               ListTile(
                 leading: CircleAvatar(
                   backgroundColor: Colors.transparent,
-                  backgroundImage: NetworkImage(ImageRouteType.category
-                      .url(event.event.category.imagePath!)),
+                  backgroundImage: NetworkImage(
+                      ImageRouteType.category.url(event.category.imagePath!)),
                 ),
                 title: const Text("Etkinlik Türü"),
-                subtitle: Text(event.event.category.name),
+                subtitle: Text(event.category.name),
               ),
             ],
           ),
@@ -211,14 +196,13 @@ class _IndexPageState extends State<IndexPage> {
             Expanded(
               child: ListTile(
                 title: const Text("Katılım Başlama Tarihi"),
-                subtitle:
-                    Text(event.event.startTime.getTimeDifferenceFromNow()),
+                subtitle: Text(event.startTime.getTimeDifferenceFromNow()),
               ),
             ),
             Expanded(
               child: ListTile(
                 title: const Text("Katılım Bitiş Tarihi"),
-                subtitle: Text(event.event.endTime.getTimeDifferenceFromNow()),
+                subtitle: Text(event.endTime.getTimeDifferenceFromNow()),
               ),
             ),
           ],

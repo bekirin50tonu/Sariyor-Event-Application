@@ -7,7 +7,7 @@ import 'package:sariyor/constants/route_constant.dart';
 import 'package:sariyor/features/auth/service/auth_service.dart';
 import 'package:sariyor/utils/router/route_service.dart';
 
-class AuthCubit extends Cubit<BaseState> {
+class AuthCubit extends Cubit<AuthBaseState> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailLoginController = TextEditingController();
@@ -22,152 +22,69 @@ class AuthCubit extends Cubit<BaseState> {
 
   bool isObscure = true;
   bool rememberMe = false;
-  
+
   final Dio service;
   final BuildContext context;
 
-  AuthCubit(this.service, this.context) : super(const IdleState());
+  AuthCubit(this.service, this.context) : super(const AuthIdleState());
 
   Future<void> register() async {
-    emit(const LoadingState());
-    await AuthService.register(service, () {
-      emit(const IdleState());
-      RouteService.instance.pushAndClear(RouteConstants.indexRoute, "");
-    }, (error, message) {
-      if (error.type == DioErrorType.connectTimeout) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
-        emit(const IdleState());
-        passwordController.text = '';
-        checkPasswordController.text = '';
-        return;
-      }
-      if (error.type == DioErrorType.receiveTimeout) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
-        emit(const IdleState());
-        passwordController.text = '';
-        checkPasswordController.text = '';
-        return;
-      }
-      if (error.response!.statusCode == 422) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error.response!.data['errors'].join('\n'))));
-        emit(const IdleState());
-        passwordController.text = '';
-        checkPasswordController.text = '';
-        return;
-      }
-      log(error.message);
-      emit(const IdleState());
-      passwordController.text = '';
-      checkPasswordController.text = '';
-    },
-        firstName: firstnameController.text.trim(),
-        lastName: lastnameController.text.trim(),
-        userName: usernameController.text.trim(),
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-        rememberMe: rememberMe);
+    try {
+      emit(const AuthLoadingState());
+      var user = await AuthService.register(service,
+          firstName: firstnameController.text.trim(),
+          lastName: lastnameController.text.trim(),
+          userName: usernameController.text.trim(),
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+          rememberMe: rememberMe);
+      RouteService.instance.pushAndClear(RouteConstants.indexRoute, '');
+      emit(const AuthLoadedState());
+    } on DioError catch (e) {}
   }
 
   Future<void> login() async {
-    emit(const LoadingState());
-    await AuthService.login(service, () {
-      emit(const IdleState());
-      RouteService.instance.pushAndClear(RouteConstants.indexRoute, "");
-    }, (error, message) {
-      if (error.type == DioErrorType.connectTimeout) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
-        emit(const IdleState());
-        passwordController.text = '';
-        return;
-      }
-      if (error.type == DioErrorType.receiveTimeout) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
-        emit(const IdleState());
-        passwordController.text = '';
-        return;
-      }
-      if (error.response == null) {
-        emit(const IdleState());
-        passwordController.text = '';
-        return;
-      }
-      if (error.response!.statusCode == 422) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error.response!.data['errors'].join('\n'))));
-        emit(const IdleState());
-        passwordController.text = '';
-        return;
-      }
-
-      log(error.message);
-      emit(const IdleState());
-      passwordController.text = '';
-    },
-        email: emailLoginController.text.trim(),
-        password: passwordLoginController.text.trim());
+    try {
+      emit(const AuthLoadingState());
+      var user = await AuthService.login(service,
+          email: emailLoginController.text.trim(),
+          password: passwordLoginController.text.trim());
+      RouteService.instance.pushAndClear(RouteConstants.indexRoute, '');
+      emit(const AuthLoadedState());
+    } on DioError catch (e) {
+      emit(AuthErrorState(e.response!.data['errors'].join('\n')));
+    }
   }
 
   Future<void> logout() async {
-    emit(const LoadingState());
-    AuthService.logout(service, () {
-      emit(const IdleState());
+    try {
+      emit(const AuthLoadingState());
+      AuthService.logout(service);
+      emit(const AuthIdleState());
       RouteService.instance.pushAndClear(RouteConstants.loginRoute, "");
-    }, (error, message) {
-      if (error.type == DioErrorType.connectTimeout) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
-        emit(const IdleState());
-        passwordController.text = '';
-        return;
-      }
-      if (error.type == DioErrorType.receiveTimeout) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
-        emit(const IdleState());
-        passwordController.text = '';
-        return;
-      }
-      if (error.response == null) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Hata Meydana Geldi. Lütfen Bağlantınızı Kontrol Ediniz.')));
-        emit(const IdleState());
-        passwordController.text = '';
-        return;
-      }
-      if (error.response!.statusCode == 422) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error.response!.data['errors'].join('\n'))));
-        emit(const IdleState());
-        passwordController.text = '';
-        return;
-      }
-
-      log(error.message);
-      emit(const IdleState());
-    });
+    } on DioError catch (e) {
+      emit(e.response!.data["errors"].join('\n'));
+    }
   }
 }
 
-abstract class BaseState {
-  const BaseState();
+abstract class AuthBaseState {
+  const AuthBaseState();
 }
 
-class IdleState extends BaseState {
-  const IdleState();
+class AuthIdleState extends AuthBaseState {
+  const AuthIdleState();
 }
 
-class LoadingState extends BaseState {
-  const LoadingState();
+class AuthLoadingState extends AuthBaseState {
+  const AuthLoadingState();
+}
+
+class AuthLoadedState extends AuthBaseState {
+  const AuthLoadedState();
+}
+
+class AuthErrorState extends AuthBaseState {
+  String message;
+  AuthErrorState(this.message);
 }

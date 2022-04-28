@@ -57,3 +57,4 @@ class EventErrorState extends EventBaseState {
   String error;
   EventErrorState(this.error);
 }
+

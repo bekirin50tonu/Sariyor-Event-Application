@@ -52,7 +52,7 @@ class ProfilePage extends StatelessWidget {
         body: backgroundImageWidget(buildProfilePageWidget(context, state)),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: const CustomBottomNavigationBar(),
-        floatingActionButton: const FloatingButton());
+        floatingActionButton: FloatingButton());
   }
 
   Widget buildProfilePageWidget(BuildContext context, UserBaseState state) {

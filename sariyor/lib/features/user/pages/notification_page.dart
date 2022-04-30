@@ -56,7 +56,7 @@ class NotificationPage extends StatelessWidget {
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
             bottomNavigationBar: const CustomBottomNavigationBar(),
-            floatingActionButton: const FloatingButton(),
+            floatingActionButton:  FloatingButton(),
           ),
         ),
       ),

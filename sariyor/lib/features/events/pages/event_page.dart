@@ -51,7 +51,7 @@ class EventPage extends StatelessWidget {
           ? const Center(child: CircularProgressIndicator.adaptive())
           : buildEventPage(context, state),
       bottomNavigationBar: const CustomBottomNavigationBar(),
-      floatingActionButton: const FloatingButton(),
+      floatingActionButton: FloatingButton(),
     );
   }
 

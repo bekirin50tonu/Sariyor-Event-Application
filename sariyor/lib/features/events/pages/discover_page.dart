@@ -40,7 +40,7 @@ class DiscoveryPage extends StatelessWidget {
     return Scaffold(
       drawer: const CustomDrawer(),
       appBar: buildAppBarWidget(),
-      floatingActionButton: const FloatingButton(),
+      floatingActionButton: FloatingButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: const CustomBottomNavigationBar(),
       body: backgroundImageWidget(buildDiscoveryWidget(context, state)),

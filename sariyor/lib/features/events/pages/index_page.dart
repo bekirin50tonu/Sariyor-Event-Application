@@ -55,7 +55,7 @@ class _IndexPageState extends State<IndexPage> {
           ? const Center(child: CircularProgressIndicator.adaptive())
           : buildEventPage(context, state),
       bottomNavigationBar: const CustomBottomNavigationBar(),
-      floatingActionButton: const FloatingButton(),
+      floatingActionButton: FloatingButton(),
     );
   }
 

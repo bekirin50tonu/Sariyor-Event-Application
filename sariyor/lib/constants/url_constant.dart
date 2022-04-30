@@ -9,6 +9,7 @@ class URLConstants {
   static const get_all_joined_events = '/event/get_joined';
   static const getCategories = '/category/get';
   static const getEventByCategory = '/event/by_category';
+  static const addEvent = '/event/create';
 
   // FRIEND
 

@@ -26,6 +26,11 @@ class UserCubit extends Cubit<UserBaseState> {
   UserCubit(this.service, this.context) : super(const UserIdleState());
   Dio service;
 
+  DateTime startTime = DateTime.now();
+  DateTime endTime = DateTime.now();
+  DateTime joinStartTime = DateTime.now();
+  DateTime joinEndTime = DateTime.now();
+
   Future<void> changeState() async {
     emit(const UserIdleState());
   }
@@ -71,10 +76,10 @@ class UserCubit extends Cubit<UserBaseState> {
       user = _user;
       if (_user!.id == Auth.instance!.user!.id) {
         Auth.instance!.user = _user;
-        firstnameController.text = _user!.firstName;
-        lastnameController.text = _user!.lastName;
-        emailController.text = _user!.email;
-        usernameController.text = _user!.username;
+        firstnameController.text = _user.firstName;
+        lastnameController.text = _user.lastName;
+        emailController.text = _user.email;
+        usernameController.text = _user.username;
       }
       emit(UserLoadedState(user: _user));
     } on DioError catch (error) {
@@ -100,7 +105,6 @@ class UserCubit extends Cubit<UserBaseState> {
     }
     emit(const UserIdleState());
   }
-
 }
 
 abstract class UserBaseState {

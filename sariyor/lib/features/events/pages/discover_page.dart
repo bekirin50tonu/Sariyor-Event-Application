@@ -38,6 +38,7 @@ class DiscoveryPage extends StatelessWidget {
 
   Scaffold buildScaffold(BuildContext context, CategoryBaseState state) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       drawer: const CustomDrawer(),
       appBar: buildAppBarWidget(),
       floatingActionButton: FloatingButton(),
@@ -84,6 +85,8 @@ class DiscoveryPage extends StatelessWidget {
                   flex: 3,
                   child: TextFormField(
                     keyboardType: TextInputType.text,
+                    controller:
+                        context.read<DiscoveryEventCubit>().searchController,
                     decoration: const InputDecoration(
                         hintText: 'Etkinlik Ara',
                         border: OutlineInputBorder(
@@ -95,7 +98,11 @@ class DiscoveryPage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.read<DiscoveryEventCubit>().getSearchData();
+                        RouteService.instance
+                            .push(RouteConstants.searchPage, "");
+                      },
                       icon: const Icon(Icons.search),
                       label: const Text(''),
                       style: ElevatedButton.styleFrom(

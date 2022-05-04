@@ -25,9 +25,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("gelen id: $id");
-    return BlocConsumer<UserCubit, UserBaseState>(
-        listener: (context, state) async {
+    return BlocConsumer<UserCubit, UserBaseState>(listener: (context, state) {
       log(state.runtimeType.toString());
       if (state is UserErrorState) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -45,6 +43,7 @@ class ProfilePage extends StatelessWidget {
   }
 
   Scaffold buildScaffold(BuildContext context, UserBaseState state) {
+    log(state.runtimeType.toString());
     if (state is UserIdleState) context.read<UserCubit>().getUserData(id);
     return Scaffold(
         key: scaffoldKey,
@@ -102,16 +101,11 @@ class ProfilePage extends StatelessWidget {
                         margin: const EdgeInsets.only(top: 20),
                         height: 100,
                         color: Colors.transparent,
-                        child: ListView(
+                        child: ListView.builder(
+                          itemCount: 1,
+                          itemBuilder: (context, index) =>
+                              ProfileCard(userName: "state.user.friendship"),
                           scrollDirection: Axis.horizontal,
-                          children: [
-                            ProfileCard(userName: 'Bekir'),
-                            ProfileCard(userName: 'Bekir'),
-                            ProfileCard(userName: 'Bekir'),
-                            ProfileCard(userName: 'Bekir'),
-                            ProfileCard(userName: 'Bekir'),
-                            ProfileCard(userName: 'Bekir'),
-                          ],
                         ),
                       )
                     ],

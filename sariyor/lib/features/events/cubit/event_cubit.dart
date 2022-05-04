@@ -5,6 +5,8 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart';
+import 'package:permission/permission.dart';
 import 'package:sariyor/constants/url_constant.dart';
 import 'package:sariyor/features/events/models/base/base_category_model.dart';
 import 'package:sariyor/features/events/models/joined_event_response_model.dart';
@@ -19,6 +21,8 @@ class EventCubit extends Cubit<EventBaseState> {
   final BuildContext context;
   bool isJoin = false;
   EventCubit(this.service, this.context) : super(const EventIdleState());
+  Location currentLocation = Location();
+  LocationData? data;
 
   TextEditingController eventNameController = TextEditingController();
   TextEditingController eventDescriptionController = TextEditingController();
@@ -35,6 +39,11 @@ class EventCubit extends Cubit<EventBaseState> {
   bool onlyFriend = false;
 
   List<Category>? categories;
+
+  Future<void> getLocation() async {
+    await Permission.requestPermissions([PermissionName.Location]);
+    data = await currentLocation.getLocation();
+  }
 
   Future<void> photoSelected(File img) async {
     emit(const EventLoadingState());
@@ -103,6 +112,31 @@ class EventCubit extends Cubit<EventBaseState> {
       emit(const EventIdleState());
     } on DioError catch (e) {
       dev.log(e.response!.data["message"]);
+    }
+  }
+
+  Future<void> joinEvent(int id) async {
+    try {
+      emit(const EventLoadingState());
+      var response =
+          await service.post(URLConstants.joinEvent, data: {'id': id});
+      emit(const EventIdleState());
+      return;
+    } on DioError catch (e) {
+      emit(EventErrorState(e.response!.data['message']));
+    }
+  }
+
+  Future<void> exitEvent(int id) async {
+    try {
+      emit(const EventLoadingState());
+      var response =
+          await service.post(URLConstants.exitEvent, data: {'id': id});
+      emit(const EventIdleState());
+      return;
+    } on DioError catch (e) {
+      dev.log(e.message);
+      emit(EventErrorState(e.response!.data['message']));
     }
   }
 }

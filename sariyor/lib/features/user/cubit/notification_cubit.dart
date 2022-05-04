@@ -34,6 +34,33 @@ class NotificationCubit extends Cubit<NotificationBaseState> {
       emit(NotificationErrorState(e.response!.data['errors'].join('\n')));
     }
   }
+
+  Future<void> acceptFriendQuest(int id) async {
+    try {
+      log("buradasın $id");
+      emit(const NotificationLoadingState());
+      var response =
+          await service.post(URLConstants.acceptFriendQuest, data: {"id": id});
+      log(response.data['message']);
+      emit(const NotificationIdleState());
+    } on DioError catch (e) {
+      log("hata geldi $id");
+      log(e.message);
+      emit(NotificationErrorState(e.response!.data['message']));
+    }
+  }
+
+  Future<void> declineFriendQuest(int id) async {
+    try {
+      emit(const NotificationLoadingState());
+      var response =
+          await service.post(URLConstants.removeFriend, data: {"id": id});
+      emit(const NotificationIdleState());
+    } on DioError catch (e) {
+      log(e.message);
+      emit(NotificationErrorState(e.response!.data['message']));
+    }
+  }
 }
 
 abstract class NotificationBaseState {

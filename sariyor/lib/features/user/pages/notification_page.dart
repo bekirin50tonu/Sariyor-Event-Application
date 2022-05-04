@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sariyor/enums/image_route_enum.dart';
+import 'package:sariyor/extensions/context_extensions.dart';
 import 'package:sariyor/extensions/datetime_extensions.dart';
 import 'package:sariyor/features/user/cubit/notification_cubit.dart';
 import 'package:sariyor/widgets/bottom_navigation_bar_widget.dart';
@@ -30,34 +31,29 @@ class NotificationPage extends StatelessWidget {
         onRefresh: () {
           return context.read<NotificationCubit>().getFriendRequest();
         },
-        child: DefaultTabController(
-          length: 2,
-          child: Scaffold(
-            drawer: const CustomDrawer(),
-            appBar: AppBar(
-              bottom: const TabBar(tabs: [
-                Tab(
-                  text: "Kullanıcı",
+        child: Scaffold(
+          drawer: const CustomDrawer(),
+          appBar: AppBar(
+            bottom: PreferredSize(
+                child: Text(
+                  "Arkadaşlık İstekleri",
+                  style: context.themeText.headline5,
                 ),
-                Tab(
-                  text: "Etkinlik",
-                )
-              ]),
-              backgroundColor: Colors.transparent,
-              elevation: 1,
-              centerTitle: true,
-              title: const Image(
-                height: 50,
-                fit: BoxFit.scaleDown,
-                image: AssetImage('images/image17.png'),
-              ),
+                preferredSize: Size(double.infinity, 30)),
+            backgroundColor: Colors.transparent,
+            elevation: 1,
+            centerTitle: true,
+            title: const Image(
+              height: 50,
+              fit: BoxFit.scaleDown,
+              image: AssetImage('images/image17.png'),
             ),
-            body: buildBodyWidget(context, state),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
-            bottomNavigationBar: const CustomBottomNavigationBar(),
-            floatingActionButton:  FloatingButton(),
           ),
+          body: buildBodyWidget(context, state),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          bottomNavigationBar: const CustomBottomNavigationBar(),
+          floatingActionButton: FloatingButton(),
         ),
       ),
     );
@@ -68,35 +64,46 @@ class NotificationPage extends StatelessWidget {
       context.read<NotificationCubit>().changeState();
       context.read<NotificationCubit>().getFriendRequest();
     }
-    return TabBarView(children: [
-      state is NotificationLoadedState
-          ? ListView.builder(
-              itemCount: state.friendship!.length,
-              itemBuilder: ((context, index) => ListTile(
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                            onPressed: () {}, icon: const Icon(Icons.add)),
-                        IconButton(
-                            onPressed: () {}, icon: const Icon(Icons.remove)),
-                      ],
-                    ),
-                    title: Text(state.friendship![index].user!.fullName),
-                    subtitle: Text(state.friendship![index].updatedAt!
-                        .getTimePastFromNow()),
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      backgroundImage: NetworkImage(ImageRouteType.profile
-                          .url(state.friendship![index].user!.imagePath)),
-                    ),
-                  )))
-          : const Center(
-              child: CircularProgressIndicator.adaptive(),
-            ),
-      const Center(
-        child: Text('UserNotification'),
-      )
-    ]);
+    return buildFriendQuestWidget(context, state);
+  }
+
+  Widget buildFriendQuestWidget(
+      BuildContext context, NotificationBaseState state) {
+    return state is NotificationLoadedState
+        ? ListView.builder(
+            itemCount: state.friendship!.length,
+            itemBuilder: ((context, index) => ListTile(
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            context
+                                .read<NotificationCubit>()
+                                .acceptFriendQuest(state.friendship![index].id);
+                          },
+                          icon: const Icon(Icons.add)),
+                      IconButton(
+                          onPressed: () {
+                            context
+                                .read<NotificationCubit>()
+                                .declineFriendQuest(
+                                    state.friendship![index].id);
+                          },
+                          icon: const Icon(Icons.remove)),
+                    ],
+                  ),
+                  title: Text(state.friendship![index].user!.fullName),
+                  subtitle: Text(
+                      state.friendship![index].updatedAt!.getTimePastFromNow()),
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                    backgroundImage: NetworkImage(ImageRouteType.profile
+                        .url(state.friendship![index].user!.imagePath)),
+                  ),
+                )))
+        : const Center(
+            child: CircularProgressIndicator.adaptive(),
+          );
   }
 }

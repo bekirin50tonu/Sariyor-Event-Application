@@ -8,6 +8,7 @@ use App\Http\Requests\User\Friends\AcceptFriendsRequest;
 use App\Http\Requests\User\Friends\AddFriendsRequest;
 use App\Http\Requests\User\Friends\DeleteFriendsRequest;
 use App\Models\AddFriend;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class AddFriendController extends Controller
@@ -43,12 +44,18 @@ class AddFriendController extends Controller
     {
         try {
             $status = AddFriend::query()->where('id', $request['id']);
-            if ($status->where('status', 'accepted')->first()) {
+            if (!$status->exists()) {
+                return new CustomJsonResponse(404, "Başarısız", "İstenen Veri Bulunamadı.");
+            }
+            if ($status->where('status', 'accepted')->exists()) {
                 return new CustomJsonResponse(403, 'Arkadaşlık İsteği Zaten Kabul Edilmiş.', []);
             }
-            $status->update(['status' => 'accepted']);
-            return new CustomJsonResponse(200, 'Başarılı', [$status]);
-        } catch (\Exception $e) {
+            $status = AddFriend::query()->where('id', $request['id']);
+            $response = $status->update(['status' => 'accepted']);
+            return new CustomJsonResponse(200, 'Başarılı', [$status->firstOrFail()]);
+        } catch (ModelNotFoundException $e) {
+            return new CustomJsonResponse(404, $e->getMessage(), $e->getTrace());
+        } catch (\Throwable $e) {
             return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());
 
         }
@@ -60,7 +67,7 @@ class AddFriendController extends Controller
     {
         try {
             $user = $request->user();
-            $quests = AddFriend::query()->where('response_user_id', $user->id)->with('user')->get();
+            $quests = AddFriend::query()->where('response_user_id', $user->id)->where('status', 'pending')->with('user')->get();
             return new CustomJsonResponse(200, 'Arkadaşlık İstekleri Başarıyla Getirildi.', $quests->toArray());
         } catch (\Exception $e) {
             return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());

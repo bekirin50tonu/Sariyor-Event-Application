@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart';
 import 'package:permission/permission.dart';
 import 'package:sariyor/extensions/context_extensions.dart';
 import 'package:sariyor/features/events/cubit/event_cubit.dart';
@@ -27,6 +29,7 @@ class FloatingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<EventCubit>(context).getCategories();
+    BlocProvider.of<EventCubit>(context).getLocation();
     return FloatingActionButton(
       backgroundColor: const Color.fromARGB(255, 85, 72, 164),
       onPressed: () {
@@ -113,6 +116,18 @@ class FloatingButton extends StatelessWidget {
                       controller: BlocProvider.of<EventCubit>(context)
                           .eventCountController,
                       secureText: false),
+                  Expanded(
+                      flex: 2,
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                            target: LatLng(
+                                BlocProvider.of<EventCubit>(context)
+                                    .data!
+                                    .latitude,
+                                BlocProvider.of<EventCubit>(context)
+                                    .data!
+                                    .latitude)),
+                      )),
                   CustomDateTimePicker(
                       displayLabel: isEnteredStartTime
                           ? BlocProvider.of<EventCubit>(context)

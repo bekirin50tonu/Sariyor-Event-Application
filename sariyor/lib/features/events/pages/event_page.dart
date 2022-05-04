@@ -13,6 +13,7 @@ import 'package:sariyor/widgets/bottom_navigation_bar_widget.dart';
 import 'package:sariyor/widgets/custom_drawer_field.dart';
 import 'package:sariyor/widgets/custom_elevated_button.dart';
 import 'package:sariyor/widgets/event_card_widget.dart';
+import 'package:sariyor/widgets/event_detail_field.dart';
 import 'package:sariyor/widgets/floating_action_button_widget.dart';
 
 import '../models/base/base_event_model.dart';
@@ -85,139 +86,12 @@ class EventPage extends StatelessWidget {
               showModalBottomSheet(
                   isScrollControlled: true,
                   context: context,
-                  builder: (_) => buildDraggableEventDetail(context, data));
+                  builder: (_) => EventDetailView(
+                        event: data,
+                        isJoined: data.isJoined,
+                      ));
             },
           );
         });
-  }
-
-  Widget buildDraggableEventDetail(BuildContext context, Event event) {
-    return Column(
-      children: [
-        const SizedBox(
-          height: 10,
-        ),
-        Expanded(
-          flex: 2,
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Image.network(
-              ImageRouteType.event.url(event.imagePath ?? "Nope"),
-              width: double.infinity,
-              height: 300,
-              fit: BoxFit.scaleDown,
-            ),
-          ),
-        ),
-        ListTile(
-          title: Center(
-            child: Text(
-              event.name,
-              style: context.themeText.headline5,
-            ),
-          ),
-          subtitle: Text(
-            event.description,
-            textAlign: TextAlign.justify,
-            style: context.themeText.headline6,
-          ),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  backgroundImage: NetworkImage(
-                      ImageRouteType.profile.url(event.owner.imagePath!)),
-                ),
-                title: const Text("Etkinliği Hazırlayan"),
-                subtitle:
-                    Text("${event.owner.fullName} @${event.owner.username}"),
-              ),
-            ),
-            Expanded(
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  backgroundImage: NetworkImage(
-                      ImageRouteType.category.url(event.category.imagePath!)),
-                ),
-                title: const Text("Etkinlik Türü"),
-                subtitle: Text(event.category.name),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Expanded(
-          flex: 3,
-          child: Container(
-            color: Colors.red,
-            child: Center(
-                child: Text(
-              "AHA DA BURAYA MAP GELECEK.\n EGE FITNESS FUCKING BUSINESS MEEEN XDD",
-              style: context.themeText.headline3!.copyWith(color: Colors.white),
-              textAlign: TextAlign.center,
-            )),
-          ),
-        ),
-        Expanded(
-          child: PageView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  backgroundImage: NetworkImage(
-                      ImageRouteType.category.url(event.category.imagePath!)),
-                ),
-                title: const Text("Etkinlik Türü"),
-                subtitle: Text(event.category.name),
-              ),
-              ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  backgroundImage: NetworkImage(
-                      ImageRouteType.category.url(event.category.imagePath!)),
-                ),
-                title: const Text("Etkinlik Türü"),
-                subtitle: Text(event.category.name),
-              ),
-            ],
-          ),
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: ListTile(
-                title: const Text("Katılım Başlama Tarihi"),
-                subtitle: Text(event.startTime.getTimeDifferenceFromNow()),
-              ),
-            ),
-            Expanded(
-              child: ListTile(
-                title: const Text("Katılım Bitiş Tarihi"),
-                subtitle: Text(event.endTime.getTimeDifferenceFromNow()),
-              ),
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
-          child: CustomElevatedButton(
-            label: 'Ayrılmak İstiyorum',
-            deactiveLabel: 'Katılmak İstiyorum',
-            onPressed: () {},
-            onPressedDisabled: () {},
-            disabled: false,
-          ),
-        ),
-      ],
-    );
   }
 }

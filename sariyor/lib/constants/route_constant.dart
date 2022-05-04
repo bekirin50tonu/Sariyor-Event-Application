@@ -8,4 +8,5 @@ class RouteConstants {
   static const discovery = '/discovery';
   static const eventRoute = '/event';
   static const notificationPage = '/notification';
+  static const searchPage = '/search';
 }

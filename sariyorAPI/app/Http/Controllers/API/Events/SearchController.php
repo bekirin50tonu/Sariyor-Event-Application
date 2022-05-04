@@ -51,7 +51,11 @@ class SearchController extends Controller
     public function allSearch(Request $request): CustomJsonResponse
     {
         try {
-            if (is_null($request['search'])) return new CustomJsonResponse(200, 'Başarıyla Arandı.', []);
+            if (is_null($request['search'])) return new CustomJsonResponse(200, 'Başarıyla Arandı.', [
+                'users' => [],
+                'events' => [],
+                'categories' => []
+            ]);
             $response['users'] = $this->getUserCollection($request['search']);
             $response['events'] = $this->getEventCollection($request['search']);
             $response['categories'] = $this->getCategoryCollection($request['search']);
@@ -76,7 +80,7 @@ class SearchController extends Controller
     private function getEventCollection($search): \Illuminate\Database\Eloquent\Collection|array
     {
         return Events::query()
-            ->where('name', 'LIKE', '%' . $search . '%')->with(['user','category'])->get();
+            ->where('name', 'LIKE', '%' . $search . '%')->with(['user', 'category'])->get();
     }
 
     private function getCategoryCollection($search): \Illuminate\Database\Eloquent\Collection|array

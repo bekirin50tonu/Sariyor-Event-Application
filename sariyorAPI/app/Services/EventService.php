@@ -83,7 +83,7 @@ class EventService
     public function exitEvent(Authenticatable $user, array $params)
     {
         try {
-            $status = JoinedEvent::query()->where($params)->where('user_id', $user->id)->delete();
+            $status = JoinedEvent::query()->where('event_id',$params['id'])->where('user_id', $user->id)->delete();
             return new CustomJsonResponse(200, 'Etkinlik Girişi Başarıyla Silindi.', [$status]);
         } catch (\Exception $e) {
             return new CustomJsonResponse(403, $e->getMessage(), $e->getTrace());

@@ -3,8 +3,10 @@
 namespace App\Http\Requests\User\Friends;
 
 use App\Http\Helpers\Classes\CustomJsonResponse;
+use App\Models\AddFriend;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class AcceptFriendsRequest extends FormRequest
 {
@@ -15,7 +17,7 @@ class AcceptFriendsRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return AddFriend::query()->where('response_user_id',Auth::id())->exists();
     }
 
     /**

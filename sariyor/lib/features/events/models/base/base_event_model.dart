@@ -20,6 +20,7 @@ class Event {
   DateTime updatedAt;
   User owner;
   Category category;
+  bool isJoined;
 
   Event(
       {required this.id,
@@ -37,25 +38,28 @@ class Event {
       required this.createdAt,
       required this.updatedAt,
       required this.owner,
-      required this.category});
+      required this.category,
+      required this.isJoined});
 
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
-        id: json['id'],
-        name: json['name'],
-        description: json['description'],
-        count: json['count'],
-        onlyFriends: json['only_friends'],
-        lat: json['lat'],
-        long: json['long'],
-        imagePath: json['image_path'],
-        startTime: DateTime.parse(json['start_time']),
-        endTime: DateTime.parse(json['end_time']),
-        joinStartTime: DateTime.parse(json['join_start_time']),
-        joinEndTime: DateTime.parse(json['join_end_time']),
-        createdAt: DateTime.parse(json['created_at']),
-        updatedAt: DateTime.parse(json['updated_at']),
-        owner: User.fromJson(json['user']),
-        category: Category.fromJson(json['category']));
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      count: json['count'],
+      onlyFriends: json['only_friends'],
+      lat: json['lat'],
+      long: json['long'],
+      imagePath: json['image_path'],
+      startTime: DateTime.parse(json['start_time']),
+      endTime: DateTime.parse(json['end_time']),
+      joinStartTime: DateTime.parse(json['join_start_time']),
+      joinEndTime: DateTime.parse(json['join_end_time']),
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
+      owner: User.fromJson(json['user']),
+      category: Category.fromJson(json['category']),
+      isJoined: json['is_joined'] as bool,
+    );
   }
 }

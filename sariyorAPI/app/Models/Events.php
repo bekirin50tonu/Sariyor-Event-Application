@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Events extends Model
 {
@@ -28,6 +29,8 @@ class Events extends Model
         'updated_at' => 'datetime'
     ];
 
+    protected $appends = ['is_joined'];
+
     public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(User::class, 'id', 'owner_id');
@@ -44,5 +47,9 @@ class Events extends Model
         $user = $this->hasOne(User::class, 'id', 'owner_id')->first();
         $category = $this->hasOne(Categories::class, 'id', 'cat_id')->first();
         return collect([$event, $user, $category]);
+    }
+
+    public function getIsJoinedAttribute(){
+        return $this->hasMany(JoinedEvent::class,'event_id','id')->where('user_id',Auth::id())->exists();
     }
 }

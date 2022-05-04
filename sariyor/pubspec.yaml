@@ -46,6 +46,8 @@ dependencies:
   flutter_bloc: ^8.0.1
   image_picker: ^0.7.2+1
   permission: ^0.1.7
+  google_maps_flutter: ^2.1.4
+  location: ^2.5.4
 
 dev_dependencies:
   flutter_test:

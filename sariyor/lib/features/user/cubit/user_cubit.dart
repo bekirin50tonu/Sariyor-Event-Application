@@ -88,13 +88,19 @@ class UserCubit extends Cubit<UserBaseState> {
   }
 
   Future<void> addFriend(int id) async {
-    emit(const UserLoadingState());
-    var response =
-        await service.post(URLConstants.addFriend, data: {"user_id": id});
-    if (response.statusCode == 200) {
-      emit(UserLoadedState(user: user!));
+    try {
+      log(id.toString());
+      emit(const UserLoadingState());
+      var response =
+          await service.post(URLConstants.addFriend, data: {"user_id": id});
+      if (response.statusCode == 200) {
+        emit(UserLoadedState(user: user!));
+      }
+      emit(const UserIdleState());
+    } on DioError catch (e) {
+      log(e.message);
+      emit(UserErrorState(e.response!.data['message']));
     }
-    emit(const UserIdleState());
   }
 
   Future<void> removeFriend(int id) async {

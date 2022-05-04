@@ -6,10 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:location/location.dart';
-import 'package:permission/permission.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:sariyor/constants/route_constant.dart';
 import 'package:sariyor/extensions/context_extensions.dart';
 import 'package:sariyor/features/events/cubit/event_cubit.dart';
+import 'package:sariyor/utils/location/location_manager.dart';
+import 'package:sariyor/utils/router/route_manager.dart';
+import 'package:sariyor/utils/router/route_service.dart';
 import 'package:sariyor/widgets/category_picker_field.dart';
 import 'package:sariyor/widgets/custom_elevated_button.dart';
 import 'package:sariyor/widgets/custom_multi_text_field.dart';
@@ -29,7 +32,6 @@ class FloatingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<EventCubit>(context).getCategories();
-    BlocProvider.of<EventCubit>(context).getLocation();
     return FloatingActionButton(
       backgroundColor: const Color.fromARGB(255, 85, 72, 164),
       onPressed: () {
@@ -48,6 +50,9 @@ class FloatingButton extends StatelessWidget {
   }
 
   Widget buildModalDialog(BuildContext context, StateSetter setState) {
+    LocationManager.getLocation();
+    double lat = LocationManager.location.latitude;
+    double long = LocationManager.location.longitude;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -116,18 +121,12 @@ class FloatingButton extends StatelessWidget {
                       controller: BlocProvider.of<EventCubit>(context)
                           .eventCountController,
                       secureText: false),
-                  Expanded(
-                      flex: 2,
-                      child: GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                            target: LatLng(
-                                BlocProvider.of<EventCubit>(context)
-                                    .data!
-                                    .latitude,
-                                BlocProvider.of<EventCubit>(context)
-                                    .data!
-                                    .latitude)),
-                      )),
+                  ElevatedButton(
+                      onPressed: () {
+                        RouteService.instance
+                            .push(RouteConstants.googleMap, "");
+                      },
+                      child: const Text("Haritadan Seç")),
                   CustomDateTimePicker(
                       displayLabel: isEnteredStartTime
                           ? BlocProvider.of<EventCubit>(context)
@@ -253,8 +252,12 @@ class FloatingButton extends StatelessWidget {
 
   Future<void> selectImagePicker(
       ImageSource source, BuildContext context) async {
-    await Permission.requestPermissions(
-        [PermissionName.Camera, PermissionName.Storage]);
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+      Permission.storage,
+      Permission.camera,
+      Permission.photos
+    ].request();
     switch (source) {
       case ImageSource.gallery:
         PickedFile? file = await BlocProvider.of<EventCubit>(context)

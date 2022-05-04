@@ -11,6 +11,7 @@ import 'package:sariyor/features/onboard/page/onboard_page.dart';
 import 'package:sariyor/features/user/pages/notification_page.dart';
 import 'package:sariyor/features/user/pages/profile_page.dart';
 import 'package:sariyor/utils/locale/shared_preferences.dart';
+import 'package:sariyor/widgets/map_page_widget.dart';
 
 class RouteManager {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -35,6 +36,8 @@ class RouteManager {
         return animationPageBuilder(const NotificationPage(), settings);
       case RouteConstants.searchPage:
         return animationPageBuilder(const SearchPage(), settings);
+      case RouteConstants.googleMap:
+        return animationPageBuilder(MapViewPage(), settings);
       default:
         return normalPageBuilder(_buildNotFoundWidget(), settings);
     }

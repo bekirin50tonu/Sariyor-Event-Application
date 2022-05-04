@@ -11,6 +11,7 @@ import 'package:sariyor/features/user/cubit/notification_cubit.dart';
 import 'package:sariyor/features/user/cubit/user_cubit.dart';
 import 'package:sariyor/themes/theme_manager.dart';
 import 'package:sariyor/utils/locale/shared_preferences.dart';
+import 'package:sariyor/utils/location/location_manager.dart';
 import 'package:sariyor/utils/router/route_manager.dart';
 import 'package:sariyor/utils/router/route_service.dart';
 import 'package:sariyor/utils/web_service/web_service.dart';
@@ -19,18 +20,19 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Prefs.init();
   await AuthPreference.getInstance();
+  await LocationManager.getLocation();
   runApp(MultiBlocProvider(providers: [
     BlocProvider<AuthCubit>(
-      lazy: false,
+        lazy: false,
         create: (context) => AuthCubit(WebService.getInstance(), context)),
     BlocProvider<EventCubit>(
-      lazy: false,
+        lazy: false,
         create: (context) => EventCubit(WebService.getInstance(), context)),
     BlocProvider<UserCubit>(
-      lazy: false,
+        lazy: false,
         create: ((context) => UserCubit(WebService.getInstance(), context))),
     BlocProvider(
-      lazy: false,
+        lazy: false,
         create: ((context) =>
             CategoryCubit(WebService.getInstance(), context))),
     BlocProvider(

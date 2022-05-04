@@ -5,7 +5,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission/permission.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sariyor/enums/image_route_enum.dart';
 import 'package:sariyor/features/auth/service/auth_module.dart';
 import 'package:sariyor/features/user/cubit/user_cubit.dart';
@@ -296,8 +296,12 @@ class ProfilePage extends StatelessWidget {
 
   Future<void> selectImagePicker(
       ImageSource source, BuildContext context) async {
-    await Permission.requestPermissions(
-        [PermissionName.Camera, PermissionName.Storage]);
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+      Permission.storage,
+      Permission.camera,
+      Permission.photos
+    ].request();
     switch (source) {
       case ImageSource.gallery:
         PickedFile? file = await BlocProvider.of<UserCubit>(context)

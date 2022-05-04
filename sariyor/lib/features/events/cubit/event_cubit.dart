@@ -4,9 +4,8 @@ import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:location/location.dart';
-import 'package:permission/permission.dart';
 import 'package:sariyor/constants/url_constant.dart';
 import 'package:sariyor/features/events/models/base/base_category_model.dart';
 import 'package:sariyor/features/events/models/joined_event_response_model.dart';
@@ -21,8 +20,6 @@ class EventCubit extends Cubit<EventBaseState> {
   final BuildContext context;
   bool isJoin = false;
   EventCubit(this.service, this.context) : super(const EventIdleState());
-  Location currentLocation = Location();
-  LocationData? data;
 
   TextEditingController eventNameController = TextEditingController();
   TextEditingController eventDescriptionController = TextEditingController();
@@ -32,6 +29,7 @@ class EventCubit extends Cubit<EventBaseState> {
   DateTime endTime = DateTime.now();
   DateTime joinStartTime = DateTime.now();
   DateTime joinEndTime = DateTime.now();
+  LatLng latLong = const LatLng(0.0, 0.0);
   Category? selectedCategory;
   File? image;
   ImagePicker picker = ImagePicker();
@@ -39,11 +37,6 @@ class EventCubit extends Cubit<EventBaseState> {
   bool onlyFriend = false;
 
   List<Category>? categories;
-
-  Future<void> getLocation() async {
-    await Permission.requestPermissions([PermissionName.Location]);
-    data = await currentLocation.getLocation();
-  }
 
   Future<void> photoSelected(File img) async {
     emit(const EventLoadingState());
@@ -88,8 +81,8 @@ class EventCubit extends Cubit<EventBaseState> {
         "description": eventDescriptionController.text.trim(),
         "count": int.parse(eventCountController.text.trim()),
         "only_friends": onlyFriend,
-        "lat": Random().nextDouble(),
-        "long": Random().nextDouble(),
+        "lat": latLong.latitude,
+        "long": latLong.longitude,
         "start_time": startTime.toIso8601String(),
         "end_time": endTime.toIso8601String(),
         "join_start_time": joinStartTime.toIso8601String(),

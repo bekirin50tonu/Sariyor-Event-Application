@@ -65,4 +65,12 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    constraints {
+        implementation('com.google.android.gms:play-services-location') {
+            version {
+                strictly "16.0.0"
+            }
+        because 'location: 3.2.4 does not specify version & google.bintray.com answers 502 Bad Gateway'
+        }
+    }
 }

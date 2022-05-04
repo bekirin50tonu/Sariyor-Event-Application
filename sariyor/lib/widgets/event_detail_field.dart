@@ -92,6 +92,7 @@ class _EventDetailViewState extends State<EventDetailView> {
         Expanded(
           flex: 3,
           child: GoogleMap(
+            zoomControlsEnabled: false,
             markers: <Marker>{
               Marker(
                   infoWindow:
@@ -102,7 +103,7 @@ class _EventDetailViewState extends State<EventDetailView> {
                       BitmapDescriptor.hueCyan))
             },
             initialCameraPosition: CameraPosition(
-                target: LatLng(widget.event.lat, widget.event.long)),
+                zoom: 8, target: LatLng(widget.event.lat, widget.event.long)),
           ),
         ),
         Expanded(

@@ -55,9 +55,13 @@ class CustomDrawer extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                const ListTile(
-                  leading: Icon(Icons.home),
-                  title: Text('Anasayfa'),
+                ListTile(
+                  onTap: () {
+                    RouteService.instance
+                        .pushAndClear(RouteConstants.indexRoute, '');
+                  },
+                  leading: const Icon(Icons.home),
+                  title: const Text('Anasayfa'),
                 ),
                 ListTile(
                     leading: const Icon(Icons.person),
@@ -67,9 +71,10 @@ class CustomDrawer extends StatelessWidget {
                       RouteService.instance.push(
                           RouteConstants.profile, Auth.instance!.user!.id);
                     }),
-                const ListTile(
-                  leading: Icon(Icons.event),
-                  title: Text('Etkinlikler'),
+                ListTile(
+                  onTap: () {},
+                  leading: const Icon(Icons.event),
+                  title: const Text('Etkinlikler'),
                 ),
               ],
             ),

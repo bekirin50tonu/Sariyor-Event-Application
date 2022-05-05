@@ -2,16 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sariyor/enums/image_route_enum.dart';
-import 'package:sariyor/extensions/context_extensions.dart';
-import 'package:sariyor/extensions/datetime_extensions.dart';
 import 'package:sariyor/features/auth/service/auth_module.dart';
 import 'package:sariyor/features/events/cubit/discovery_event_cubit.dart';
 import 'package:sariyor/features/user/cubit/user_cubit.dart';
 import 'package:sariyor/widgets/appbar_widget.dart';
 import 'package:sariyor/widgets/bottom_navigation_bar_widget.dart';
 import 'package:sariyor/widgets/custom_drawer_field.dart';
-import 'package:sariyor/widgets/custom_elevated_button.dart';
 import 'package:sariyor/widgets/event_card_widget.dart';
 import 'package:sariyor/widgets/event_detail_field.dart';
 import 'package:sariyor/widgets/floating_action_button_widget.dart';

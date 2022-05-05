@@ -55,7 +55,7 @@ class EventsController extends Controller
         try {
             $cat_id = $request->input('id');
             $user = $request->user();
-            $events = Events::query()->where('cat_id', $cat_id)->with('user:id,first_name,last_name,username,email,image_path')->with('category:id,name,image_path')->get()->toArray();
+            $events = Events::query()->where('cat_id', $cat_id)->with('user:id,first_name,last_name,username,email,image_path')->with('category:id,name,image_path')->orderByDesc('updated_at')->get()->toArray();
             return new CustomJsonResponse(200, 'Kateroriye Göre Etkinlikler Getirildi', $events);
         } catch (\Throwable $e) {
             return new CustomJsonResponse(404, $e->getMessage(), $e->getTrace());

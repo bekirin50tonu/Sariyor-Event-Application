@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sariyor/extensions/context_extensions.dart';
 import 'package:sariyor/extensions/datetime_extensions.dart';
+import 'package:sariyor/features/events/cubit/category_cubit.dart';
+import 'package:sariyor/features/events/cubit/discovery_event_cubit.dart';
 import 'package:sariyor/features/events/cubit/event_cubit.dart';
 import 'package:sariyor/features/user/cubit/user_cubit.dart';
 
@@ -78,6 +80,13 @@ class _EventDetailViewState extends State<EventDetailView> {
             ),
             Expanded(
               child: ListTile(
+                onTap: () {
+                  BlocProvider.of<DiscoveryEventCubit>(context)
+                      .getEventsByCategory(widget.event.category.id);
+
+                  RouteService.instance.push(
+                      RouteConstants.eventRoute, widget.event.category.id);
+                },
                 leading: CircleAvatar(
                   backgroundColor: Colors.transparent,
                   backgroundImage: NetworkImage(ImageRouteType.category
@@ -119,8 +128,9 @@ class _EventDetailViewState extends State<EventDetailView> {
                   backgroundImage: NetworkImage(ImageRouteType.category
                       .url(widget.event.category.imagePath!)),
                 ),
-                title: const Text("Etkinlik Türü"),
-                subtitle: Text(widget.event.category.name),
+                title: const Text("Etkinlik Başlama Tarihi"),
+                subtitle:
+                    Text(widget.event.startTime.getTimeDifferenceFromNow()),
               ),
               ListTile(
                 leading: CircleAvatar(
@@ -128,8 +138,8 @@ class _EventDetailViewState extends State<EventDetailView> {
                   backgroundImage: NetworkImage(ImageRouteType.category
                       .url(widget.event.category.imagePath!)),
                 ),
-                title: const Text("Etkinlik Türü"),
-                subtitle: Text(widget.event.category.name),
+                title: const Text("Etkinlik Bitiş Tarihi"),
+                subtitle: Text(widget.event.endTime.getTimeDifferenceFromNow()),
               ),
             ],
           ),

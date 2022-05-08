@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sariyor/extensions/context_extensions.dart';
 import 'package:sariyor/extensions/datetime_extensions.dart';
 import 'package:sariyor/features/events/cubit/event_cubit.dart';
+import 'package:sariyor/features/user/cubit/user_cubit.dart';
 
 import '../constants/route_constant.dart';
 import '../enums/image_route_enum.dart';
@@ -60,13 +61,15 @@ class _EventDetailViewState extends State<EventDetailView> {
             Expanded(
               child: ListTile(
                 onTap: () {
+                  BlocProvider.of<UserCubit>(context)
+                      .getUserData(widget.event.owner.id);
                   RouteService.instance
                       .push(RouteConstants.profile, widget.event.owner.id);
                 },
                 leading: CircleAvatar(
                   backgroundColor: Colors.transparent,
-                  backgroundImage: NetworkImage(ImageRouteType.profile
-                      .url(widget.event.owner.imagePath!)),
+                  backgroundImage: NetworkImage(
+                      ImageRouteType.profile.url(widget.event.owner.imagePath)),
                 ),
                 title: const Text("Etkinliği Hazırlayan"),
                 subtitle: Text(
@@ -78,7 +81,7 @@ class _EventDetailViewState extends State<EventDetailView> {
                 leading: CircleAvatar(
                   backgroundColor: Colors.transparent,
                   backgroundImage: NetworkImage(ImageRouteType.category
-                      .url(widget.event.category.imagePath!)),
+                      .url(widget.event.category.imagePath)),
                 ),
                 title: const Text("Etkinlik Türü"),
                 subtitle: Text(widget.event.category.name),

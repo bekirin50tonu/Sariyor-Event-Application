@@ -97,7 +97,7 @@ class EventCubit extends Cubit<EventBaseState> {
       var response = await service.post(URLConstants.addEvent,
           data: data,
           options: Options(contentType: 'multipart/form-data', headers: {
-            Headers.contentLengthHeader: await image!.length(),
+            if(image != null)Headers.contentLengthHeader: await image!.length(),
           }));
       if (response.statusCode == 403) {
         dev.log(response.data["message"]);

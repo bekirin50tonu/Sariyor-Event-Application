@@ -105,7 +105,8 @@ class UserCubit extends Cubit<UserBaseState> {
 
   Future<void> removeFriend(int id) async {
     emit(const UserLoadingState());
-    var response = await service.post(URLConstants.addFriend, data: {"id": id});
+    var response =
+        await service.post(URLConstants.removeFriend, data: {"id": id});
     if (response.statusCode == 200) {
       emit(UserLoadedState(user: user!));
     }
